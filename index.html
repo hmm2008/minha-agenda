@@ -217,30 +217,9 @@
         setIsEventModalOpen(true);
       };
 
-      const handleSaveEvent = (e) => {
-        e.preventDefault();
-        if (!formData.title.trim()) return;
-
-        if (editingEvent) {
-          setEvents(prev => prev.map(evt => evt.id === editingEvent.id ? { ...formData, id: editingEvent.id } : evt));
-        } else {
-          const newEvt = { ...formData, id: Date.now().toString() };
-          setEvents(prev => [...prev, newEvt]);
-        }
-        setIsEventModalOpen(false);
-      };
-
-      const handleDeleteEvent = (id, e) => {
-        if (e) e.stopPropagation();
-        setEvents(prev => prev.filter(evt => evt.id !== id));
-        setIsEventModalOpen(false);
-      };
-
-      const handleSyncGoogleSheets = async () => {
-        if (!sheetUrl.trim()) {
-          setSyncStatus({ type: 'error', message: 'Insira a URL do Apps Script do Google.' });
-          return;
-        }
+      // Função de Sincronização Genérica
+      const syncWithSheets = async (targetEvents = events) => {
+        if (!sheetUrl.trim()) return;
 
         setIsSyncing(true);
         setSyncStatus({ type: 'info', message: 'Sincronizando com o Google Sheets...' });
@@ -249,16 +228,16 @@
           const response = await fetch(sheetUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ events }),
+            body: JSON.stringify({ events: targetEvents }),
           });
 
           const resData = await response.json();
 
           if (resData.status === 'success') {
-            if (resData.events && Array.isArray(resData.events)) {
+            if (resData.events && Array.isArray(resData.events) && targetEvents === events) {
               setEvents(resData.events);
             }
-            setSyncStatus({ type: 'success', message: 'Sincronizado com sucesso!' });
+            setSyncStatus({ type: 'success', message: 'Sincronizado automaticamente!' });
           } else {
             throw new Error(resData.message || 'Erro ao comunicar com o Google Sheets.');
           }
@@ -270,6 +249,48 @@
         } finally {
           setIsSyncing(false);
         }
+      };
+
+      const handleSaveEvent = (e) => {
+        e.preventDefault();
+        if (!formData.title.trim()) return;
+
+        let updatedEvents;
+        if (editingEvent) {
+          updatedEvents = events.map(evt => evt.id === editingEvent.id ? { ...formData, id: editingEvent.id } : evt);
+        } else {
+          const newEvt = { ...formData, id: Date.now().toString() };
+          updatedEvents = [...events, newEvt];
+        }
+
+        setEvents(updatedEvents);
+        setIsEventModalOpen(false);
+
+        // Sincronia imediata se a URL do Google Sheets estiver configurada
+        if (sheetUrl.trim()) {
+          syncWithSheets(updatedEvents);
+        }
+      };
+
+      const handleDeleteEvent = (id, e) => {
+        if (e) e.stopPropagation();
+        const updatedEvents = events.filter(evt => evt.id !== id);
+        setEvents(updatedEvents);
+        setIsEventModalOpen(false);
+
+        // Sincronia imediata ao apagar
+        if (sheetUrl.trim()) {
+          syncWithSheets(updatedEvents);
+        }
+      };
+
+      const handleSyncGoogleSheets = async () => {
+        if (!sheetUrl.trim()) {
+          setSyncStatus({ type: 'error', message: 'Insira a URL do Apps Script do Google.' });
+          ariaOpenModal(true);
+          return;
+        }
+        await syncWithSheets(events);
       };
 
       const headerDateLabel = useMemo(() => {
