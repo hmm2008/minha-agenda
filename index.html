@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Pessoal Pro</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React 18 e ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel Standalone para compilar JSX no navegador -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Estilização da barra de rolagem */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.4);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white">
+  <div id="root"></div>
+
+  <!-- APLICAÇÃO REACT -->
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // --- ÍCONES SVG EMBUTIDOS (Zero dependências externas) ---
+    const IconCalendar = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
+    const IconChevronLeft = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>;
+    const IconChevronRight = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>;
+    const IconPlus = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>;
+    const IconMapPin = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>;
+    const IconClock = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
+    const IconTrash = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>;
+    const IconEdit = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>;
+    const IconX = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>;
+    const IconRefresh = ({ spinning }) => <svg className={`w-4 h-4 ${spinning ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>;
+    const IconSheets = () => <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>;
+    const IconSearch = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>;
+    const IconFilter = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.447.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"></path></svg>;
+    const IconCheck = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>;
+    const IconCopy = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>;
+    const IconGrid = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>;
+    const IconDays = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
+
+    // --- CONFIGURAÇÃO DE CATEGORIAS ---
+    const CATEGORIES = [
+      { id: 'work', label: 'Trabalho', bg: 'bg-indigo-500/15', text: 'text-indigo-400', border: 'border-indigo-500/30', dot: 'bg-indigo-500' },
+      { id: 'personal', label: 'Pessoal', bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30', dot: 'bg-emerald-500' },
+      { id: 'health', label: 'Saúde', bg: 'bg-rose-500/15', text: 'text-rose-400', border: 'border-rose-500/30', dot: 'bg-rose-500' },
+      { id: 'study', label: 'Estudo', bg: 'bg-violet-500/15', text: 'text-violet-400', border: 'border-violet-500/30', dot: 'bg-violet-500' },
+      { id: 'finance', label: 'Finanças', bg: 'bg-amber-500/15', text: 'text-amber-400', border: 'border-amber-500/30', dot: 'bg-amber-500' },
+      { id: 'social', label: 'Lazer & Social', bg: 'bg-cyan-500/15', text: 'text-cyan-400', border: 'border-cyan-500/30', dot: 'bg-cyan-500' },
+    ];
+
+    const DEFAULT_CATEGORY = CATEGORIES[0];
+
+    const formatDateKey = (date) => {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    const getCategoryMeta = (catId) => CATEGORIES.find(c => c.id === catId) || DEFAULT_CATEGORY;
+
+    const INITIAL_EVENTS = [
+      {
+        id: '1',
+        title: 'Reunião de Alinhamento de Projeto',
+        date: formatDateKey(new Date()),
+        startTime: '09:30',
+        endTime: '10:30',
+        location: 'Google Meet / Sala A',
+        category: 'work',
+        notes: 'Revisar metas trimestrais e prazos de entrega.'
+      },
+      {
+        id: '2',
+        title: 'Consulta Médica de Rotina',
+        date: formatDateKey(new Date(Date.now() + 86400000)),
+        startTime: '14:00',
+        endTime: '15:00',
+        location: 'Centro Médico Lisboa',
+        category: 'health',
+        notes: 'Levar exames de sangue recentes.'
+      },
+      {
+        id: '3',
+        title: 'Sessão de Foco & Leitura',
+        date: formatDateKey(new Date(Date.now() - 86400000)),
+        startTime: '16:00',
+        endTime: '18:00',
+        location: 'Home Office',
+        category: 'study',
+        notes: 'Estudar desenvolvimento web e GitHub Pages.'
+      }
+    ];
+
+    // --- COMPONENTE PRINCIPAL ---
+    function App() {
+      const [events, setEvents] = useState(() => {
+        const saved = localStorage.getItem('agenda_events_v3');
+        return saved ? JSON.parse(saved) : INITIAL_EVENTS;
+      });
+
+      const [currentDate, setCurrentDate] = useState(new Date());
+      const [viewMode, setViewMode] = useState('month'); // 'month' | 'week' | 'day'
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('all');
+
+      // Modais
+      const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+      const [editingEvent, setEditingEvent] = useState(null);
+      const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+
+      // Google Sheets
+      const [sheetUrl, setSheetUrl] = useState(() => localStorage.getItem('agenda_sheet_url') || '');
+      const [isSyncing, setIsSyncing] = useState(false);
+      const [syncStatus, setSyncStatus] = useState({ type: null, message: '' });
+
+      // Formulário
+      const [formData, setFormData] = useState({
+        title: '',
+        date: formatDateKey(new Date()),
+        startTime: '09:00',
+        endTime: '10:00',
+        location: '',
+        category: 'work',
+        notes: ''
+      });
+
+      useEffect(() => {
+        localStorage.setItem('agenda_events_v3', JSON.stringify(events));
+      }, [events]);
+
+      useEffect(() => {
+        localStorage.setItem('agenda_sheet_url', sheetUrl);
+      }, [sheetUrl]);
+
+      const filteredEvents = useMemo(() => {
+        return events.filter(evt => {
+          const matchesSearch = 
+            evt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            evt.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (evt.notes && evt.notes.toLowerCase().includes(searchQuery.toLowerCase()));
+          
+          const matchesCategory = selectedCategoryFilter === 'all' || evt.category === selectedCategoryFilter;
+          return matchesSearch && matchesCategory;
+        });
+      }, [events, searchQuery, selectedCategoryFilter]);
+
+      const handleToday = () => setCurrentDate(new Date());
+
+      const handlePrev = () => {
+        const newDate = new Date(currentDate);
+        if (viewMode === 'month') newDate.setMonth(newDate.getMonth() - 1);
+        else if (viewMode === 'week') newDate.setDate(newDate.getDate() - 7);
+        else if (viewMode === 'day') newDate.setDate(newDate.getDate() - 1);
+        setCurrentDate(newDate);
+      };
+
+      const handleNext = () => {
+        const newDate = new Date(currentDate);
+        if (viewMode === 'month') newDate.setMonth(newDate.getMonth() + 1);
+        else if (viewMode === 'week') newDate.setDate(newDate.getDate() + 7);
+        else if (viewMode === 'day') newDate.setDate(newDate.getDate() + 1);
+        setCurrentDate(newDate);
+      };
+
+      const openNewEventModal = (dateStr = formatDateKey(currentDate), timeStr = '09:00') => {
+        const endH = parseInt(timeStr.split(':')[0], 10) + 1;
+        const endStr = `${String(endH % 24).padStart(2, '0')}:${timeStr.split(':')[1] || '00'}`;
+
+        setEditingEvent(null);
+        setFormData({
+          title: '',
+          date: dateStr,
+          startTime: timeStr,
+          endTime: endStr,
+          location: '',
+          category: 'work',
+          notes: ''
+        });
+        setIsEventModalOpen(true);
+      };
+
+      const openEditEventModal = (eventObj, e) => {
+        if (e) e.stopPropagation();
+        setEditingEvent(eventObj);
+        setFormData({ ...eventObj });
+        setIsEventModalOpen(true);
+      };
+
+      const handleSaveEvent = (e) => {
+        e.preventDefault();
+        if (!formData.title.trim()) return;
+
+        if (editingEvent) {
+          setEvents(prev => prev.map(evt => evt.id === editingEvent.id ? { ...formData, id: editingEvent.id } : evt));
+        } else {
+          const newEvt = { ...formData, id: Date.now().toString() };
+          setEvents(prev => [...prev, newEvt]);
+        }
+        setIsEventModalOpen(false);
+      };
+
+      const handleDeleteEvent = (id, e) => {
+        if (e) e.stopPropagation();
+        setEvents(prev => prev.filter(evt => evt.id !== id));
+        setIsEventModalOpen(false);
+      };
+
+      const handleSyncGoogleSheets = async () => {
+        if (!sheetUrl.trim()) {
+          setSyncStatus({ type: 'error', message: 'Insira a URL do Apps Script do Google.' });
+          return;
+        }
+
+        setIsSyncing(true);
+        setSyncStatus({ type: 'info', message: 'Sincronizando com o Google Sheets...' });
+
+        try {
+          const response = await fetch(sheetUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ events }),
+          });
+
+          const resData = await response.json();
+
+          if (resData.status === 'success') {
+            if (resData.events && Array.isArray(resData.events)) {
+              setEvents(resData.events);
+            }
+            setSyncStatus({ type: 'success', message: 'Sincronizado com sucesso!' });
+          } else {
+            throw new Error(resData.message || 'Erro ao comunicar com o Google Sheets.');
+          }
+        } catch (err) {
+          setSyncStatus({ 
+            type: 'error', 
+            message: 'Erro na conexão. Verifique a URL ou permissões do Apps Script.' 
+          });
+        } finally {
+          setIsSyncing(false);
+        }
+      };
+
+      const headerDateLabel = useMemo(() => {
+        const locale = 'pt-PT';
+        if (viewMode === 'month') {
+          return currentDate.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+        } else if (viewMode === 'day') {
+          return currentDate.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        } else {
+          const dayOfWeek = (currentDate.getDay() + 6) % 7;
+          const startOfWeek = new Date(currentDate);
+          startOfWeek.setDate(currentDate.getDate() - dayOfWeek);
+          const endOfWeek = new Date(startOfWeek);
+          endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+          const startMonth = startOfWeek.toLocaleDateString(locale, { month: 'short' });
+          const endMonth = endOfWeek.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
+
+          return `${startOfWeek.getDate()} ${startMonth} - ${endOfWeek.getDate()} ${endMonth}`;
+        }
+      }, [currentDate, viewMode]);
+
+      return (
+        <div className="flex flex-col min-h-screen">
+          {/* CABEÇALHO SUPERIOR */}
+          <header className="sticky top-0 z-30 backdrop-blur-xl bg-slate-900/80 border-b border-slate-800/80 px-4 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-xl shadow-lg shadow-indigo-500/20 text-white">
+                <IconCalendar />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                  Agenda Pessoal Pro
+                </h1>
+                <p className="text-xs text-slate-400 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Online no GitHub Pages
+                </p>
+              </div>
+            </div>
+
+            {/* Alternador de Vistas */}
+            <div className="flex items-center gap-2 bg-slate-800/70 p-1 rounded-xl border border-slate-700/60">
+              <button
+                onClick={() => setViewMode('month')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
+                  viewMode === 'month' 
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                }`}
+              >
+                <IconGrid />
+                Mês
+              </button>
+              <button
+                onClick={() => setViewMode('week')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
+                  viewMode === 'week' 
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                }`}
+              >
+                <IconDays />
+                Semana
+              </button>
+              <button
+                onClick={() => setViewMode('day')}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
+                  viewMode === 'day' 
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                }`}
+              >
+                <IconClock />
+                Dia
+              </button>
+            </div>
+
+            {/* Ações Rápidas */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsSyncModalOpen(true)}
+                className="px-3.5 py-2 text-xs font-medium rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-all flex items-center gap-2 shadow-sm"
+              >
+                <IconSheets />
+                <span className="hidden sm:inline">Google Sheets</span>
+              </button>
+
+              <button
+                onClick={() => openNewEventModal()}
+                className="px-4 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 text-white hover:from-indigo-600 hover:to-violet-700 shadow-md shadow-indigo-500/25 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <IconPlus />
+                <span>Novo Evento</span>
+              </button>
+            </div>
+          </header>
+
+          {/* BARRA NAVEGAÇÃO E PESQUISA */}
+          <div className="bg-slate-900/40 border-b border-slate-800/60 px-4 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleToday}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white transition-all"
+              >
+                Hoje
+              </button>
+              
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={handlePrev}
+                  className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-all"
+                >
+                  <IconChevronLeft />
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-all"
+                >
+                  <IconChevronRight />
+                </button>
+              </div>
+
+              <h2 className="text-lg font-bold text-slate-100 capitalize">
+                {headerDateLabel}
+              </h2>
+            </div>
+
+            <div className="flex items-center gap-3 w-full lg:w-auto">
+              <div className="relative flex-1 lg:w-64">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                  <IconSearch />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Buscar evento ou local..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                />
+              </div>
+
+              <div className="flex items-center gap-1.5 bg-slate-800/60 border border-slate-700/80 rounded-xl px-2.5 py-1.5">
+                <IconFilter />
+                <select
+                  value={selectedCategoryFilter}
+                  onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+                  className="bg-transparent text-xs text-slate-200 focus:outline-none cursor-pointer"
+                >
+                  <option value="all" className="bg-slate-900">Todas as Categorias</option>
+                  {CATEGORIES.map(cat => (
+                    <option key={cat.id} value={cat.id} className="bg-slate-900">
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* ÁREA PRINCIPAL */}
+          <main className="flex-1 p-4 sm:p-6 max-w-[1600px] w-full mx-auto">
+            {viewMode === 'month' && (
+              <MonthView 
+                currentDate={currentDate} 
+                events={filteredEvents}
+                onSelectDate={(d) => {
+                  setCurrentDate(d);
+                  setViewMode('day');
+                }}
+                onAddEventOnDate={(dateStr) => openNewEventModal(dateStr)}
+                onEditEvent={openEditEventModal}
+              />
+            )}
+
+            {viewMode === 'week' && (
+              <WeekView 
+                currentDate={currentDate} 
+                events={filteredEvents}
+                onAddEvent={(dateStr, timeStr) => openNewEventModal(dateStr, timeStr)}
+                onEditEvent={openEditEventModal}
+              />
+            )}
+
+            {viewMode === 'day' && (
+              <DayView 
+                currentDate={currentDate} 
+                events={filteredEvents}
+                onAddEvent={(dateStr, timeStr) => openNewEventModal(dateStr, timeStr)}
+                onEditEvent={openEditEventModal}
+                onDeleteEvent={handleDeleteEvent}
+              />
+            )}
+          </main>
+
+          {/* MODAL: AGENDAR / EDITAR */}
+          {isEventModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    {editingEvent ? <IconEdit /> : <IconPlus />}
+                    {editingEvent ? 'Editar Compromisso' : 'Novo Compromisso'}
+                  </h3>
+                  <button 
+                    onClick={() => setIsEventModalOpen(false)}
+                    className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                  >
+                    <IconX />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSaveEvent} className="p-6 space-y-4 overflow-y-auto flex-1">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                      Título do Evento *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ex: Reunião, Treino, Consulta..."
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Data *</label>
+                      <input
+                        type="date"
+                        required
+                        value={formData.date}
+                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Categoria</label>
+                      <select
+                        value={formData.category}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                      >
+                        {CATEGORIES.map(cat => (
+                          <option key={cat.id} value={cat.id} className="bg-slate-900">{cat.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Início</label>
+                      <input
+                        type="time"
+                        required
+                        value={formData.startTime}
+                        onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Fim</label>
+                      <input
+                        type="time"
+                        required
+                        value={formData.endTime}
+                        onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Local / Link</label>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                        <IconMapPin />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Ex: Sala 2 ou Google Meet"
+                        value={formData.location}
+                        onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-9 pr-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Notas / Descrição</label>
+                    <textarea
+                      rows="3"
+                      placeholder="Adicione detalhes..."
+                      value={formData.notes}
+                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
+                    ></textarea>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
+                    {editingEvent ? (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteEvent(editingEvent.id)}
+                        className="px-4 py-2 text-xs font-semibold rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 flex items-center gap-1.5"
+                      >
+                        <IconTrash />
+                        Excluir
+                      </button>
+                    ) : <div />}
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsEventModalOpen(false)}
+                        className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-5 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
+                      >
+                        <IconCheck />
+                        Salvar
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* MODAL: GOOGLE SHEETS SYNC */}
+          {isSyncModalOpen && (
+            <GoogleSheetsSyncModal
+              isOpen={isSyncModalOpen}
+              onClose={() => setIsSyncModalOpen(false)}
+              sheetUrl={sheetUrl}
+              setSheetUrl={setSheetUrl}
+              onSync={handleSyncGoogleSheets}
+              isSyncing={isSyncing}
+              syncStatus={syncStatus}
+            />
+          )}
+        </div>
+      );
+    }
+
+    // --- VISTA MÊS ---
+    function MonthView({ currentDate, events, onSelectDate, onAddEventOnDate, onEditEvent }) {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      const calendarDays = useMemo(() => {
+        const firstDayOfMonth = new Date(year, month, 1);
+        const lastDayOfMonth = new Date(year, month + 1, 0);
+
+        let startingDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7;
+        const totalDays = lastDayOfMonth.getDate();
+        const days = [];
+
+        const prevMonthLastDay = new Date(year, month, 0).getDate();
+        for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+          const prevDate = new Date(year, month - 1, prevMonthLastDay - i);
+          days.push({ date: prevDate, isCurrentMonth: false, dateKey: formatDateKey(prevDate) });
+        }
+
+        for (let i = 1; i <= totalDays; i++) {
+          const currDate = new Date(year, month, i);
+          days.push({ date: currDate, isCurrentMonth: true, dateKey: formatDateKey(currDate) });
+        }
+
+        const remainingCells = (7 - (days.length % 7)) % 7;
+        for (let i = 1; i <= remainingCells; i++) {
+          const nextDate = new Date(year, month + 1, i);
+          days.push({ date: nextDate, isCurrentMonth: false, dateKey: formatDateKey(nextDate) });
+        }
+
+        return days;
+      }, [year, month]);
+
+      const weekDayLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+      const todayKey = formatDateKey(new Date());
+
+      return (
+        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md flex flex-col">
+          <div className="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80 text-center text-xs font-semibold text-slate-400 py-3">
+            {weekDayLabels.map((day, idx) => (
+              <div key={idx} className={idx >= 5 ? 'text-indigo-400/80' : ''}>{day}</div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 auto-rows-fr gap-[1px] bg-slate-800/50 min-h-[600px]">
+            {calendarDays.map((dayObj, index) => {
+              const dayEvents = events.filter(e => e.date === dayObj.dateKey);
+              const isToday = dayObj.dateKey === todayKey;
+
+              return (
+                <div
+                  key={index}
+                  onClick={() => onSelectDate(dayObj.date)}
+                  className={`min-h-[110px] p-2 bg-slate-900/90 transition-all group hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
+                    !dayObj.isCurrentMonth ? 'opacity-40 bg-slate-950/40' : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className={`text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center ${
+                      isToday ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-400' : 'text-slate-300'
+                    }`}>
+                      {dayObj.date.getDate()}
+                    </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddEventOnDate(dayObj.dateKey);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white"
+                    >
+                      <IconPlus />
+                    </button>
+                  </div>
+
+                  <div className="space-y-1 flex-1 overflow-y-auto max-h-[85px] custom-scrollbar">
+                    {dayEvents.map((evt) => {
+                      const meta = getCategoryMeta(evt.category);
+                      return (
+                        <div
+                          key={evt.id}
+                          onClick={(e) => onEditEvent(evt, e)}
+                          className={`px-2 py-1 rounded text-[11px] border font-medium truncate flex items-center justify-between gap-1 ${meta.bg} ${meta.text} ${meta.border}`}
+                        >
+                          <span className="truncate">{evt.title}</span>
+                          <span className="text-[9px] opacity-75 font-mono shrink-0">{evt.startTime}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // --- VISTA SEMANA ---
+    function WeekView({ currentDate, events, onAddEvent, onEditEvent }) {
+      const hours = Array.from({ length: 15 }, (_, i) => i + 8);
+
+      const weekDays = useMemo(() => {
+        const dayOfWeek = (currentDate.getDay() + 6) % 7;
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() - dayOfWeek);
+
+        return Array.from({ length: 7 }, (_, i) => {
+          const d = new Date(startOfWeek);
+          d.setDate(startOfWeek.getDate() + i);
+          return {
+            date: d,
+            dateKey: formatDateKey(d),
+            label: d.toLocaleDateString('pt-PT', { weekday: 'short' }),
+            dayNum: d.getDate(),
+            isToday: formatDateKey(d) === formatDateKey(new Date())
+          };
+        });
+      }, [currentDate]);
+
+      return (
+        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md flex flex-col overflow-x-auto">
+          <div className="grid grid-cols-8 border-b border-slate-800 bg-slate-900/90 sticky top-0 z-10 min-w-[700px]">
+            <div className="p-3 text-center text-xs font-bold text-slate-500 border-r border-slate-800">Hora</div>
+            {weekDays.map((wd, i) => (
+              <div key={i} className="p-3 text-center border-r border-slate-800/60 last:border-r-0">
+                <span className="text-xs uppercase font-semibold text-slate-400 block">{wd.label}</span>
+                <span className={`inline-block mt-0.5 text-sm font-bold px-2 py-0.5 rounded-full ${wd.isToday ? 'bg-indigo-600 text-white' : 'text-slate-200'}`}>
+                  {wd.dayNum}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="divide-y divide-slate-800/50 min-w-[700px]">
+            {hours.map((hour) => {
+              const hourStr = `${String(hour).padStart(2, '0')}:00`;
+              return (
+                <div key={hour} className="grid grid-cols-8 min-h-[64px]">
+                  <div className="p-2 border-r border-slate-800 text-slate-400 text-xs font-mono font-medium text-center flex items-center justify-center bg-slate-900/40">
+                    {hourStr}
+                  </div>
+
+                  {weekDays.map((wd, dayIdx) => {
+                    const hourEvents = events.filter(e => {
+                      if (e.date !== wd.dateKey) return false;
+                      const startH = parseInt(e.startTime.split(':')[0], 10);
+                      return startH === hour;
+                    });
+
+                    return (
+                      <div
+                        key={dayIdx}
+                        onClick={() => onAddEvent(wd.dateKey, hourStr)}
+                        className="p-1 border-r border-slate-800/40 last:border-r-0 hover:bg-indigo-950/20 transition-all cursor-pointer"
+                      >
+                        {hourEvents.map(evt => {
+                          const meta = getCategoryMeta(evt.category);
+                          return (
+                            <div
+                              key={evt.id}
+                              onClick={(e) => onEditEvent(evt, e)}
+                              className={`p-2 rounded-lg border text-xs font-medium ${meta.bg} ${meta.text} ${meta.border} mb-1`}
+                            >
+                              <div className="font-semibold truncate">{evt.title}</div>
+                              <div className="text-[10px] opacity-80 flex items-center gap-1 mt-0.5 font-mono">
+                                <IconClock />
+                                {evt.startTime} - {evt.endTime}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // --- VISTA DIA ---
+    function DayView({ currentDate, events, onAddEvent, onEditEvent, onDeleteEvent }) {
+      const dateKey = formatDateKey(currentDate);
+      const dayEvents = events.filter(e => e.date === dateKey);
+      const hours = Array.from({ length: 16 }, (_, i) => i + 7);
+
+      return (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md flex flex-col">
+            <div className="p-4 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+                <IconClock /> Horário do Dia
+              </h3>
+              <span className="text-xs text-slate-400 font-mono">{dayEvents.length} evento(s)</span>
+            </div>
+
+            <div className="divide-y divide-slate-800/60 overflow-y-auto">
+              {hours.map((hour) => {
+                const hourStr = `${String(hour).padStart(2, '0')}:00`;
+                const matchingEvents = dayEvents.filter(e => {
+                  const startH = parseInt(e.startTime.split(':')[0], 10);
+                  return startH === hour;
+                });
+
+                return (
+                  <div key={hour} className="flex min-h-[72px] hover:bg-slate-800/30">
+                    <div className="w-20 sm:w-24 p-3 border-r border-slate-800 text-xs font-mono text-slate-400 flex items-center justify-center bg-slate-900/40 shrink-0">
+                      {hourStr}
+                    </div>
+
+                    <div 
+                      onClick={() => onAddEvent(dateKey, hourStr)}
+                      className="flex-1 p-2 flex flex-col gap-2 cursor-pointer hover:bg-indigo-950/10"
+                    >
+                      {matchingEvents.map(evt => {
+                        const meta = getCategoryMeta(evt.category);
+                        return (
+                          <div
+                            key={evt.id}
+                            onClick={(e) => onEditEvent(evt, e)}
+                            className={`p-3 rounded-xl border ${meta.bg} ${meta.border} ${meta.text} flex items-start justify-between gap-3`}
+                          >
+                            <div>
+                              <div className="font-bold text-sm text-white flex items-center gap-2">
+                                <span className={`w-2.5 h-2.5 rounded-full ${meta.dot}`}></span>
+                                {evt.title}
+                              </div>
+                              <div className="flex items-center gap-3 text-xs opacity-90 font-mono mt-1">
+                                <span>{evt.startTime} - {evt.endTime}</span>
+                                {evt.location && <span>• {evt.location}</span>}
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={(e) => onDeleteEvent(evt.id, e)}
+                              className="p-1.5 rounded hover:bg-rose-500/20 text-rose-400"
+                            >
+                              <IconTrash />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl">
+            <h3 className="text-sm font-bold text-slate-200 mb-3">Resumo do Dia</h3>
+            {dayEvents.length === 0 ? (
+              <p className="text-slate-500 text-xs">Sem eventos agendados.</p>
+            ) : (
+              <div className="space-y-2">
+                {dayEvents.map(evt => {
+                  const meta = getCategoryMeta(evt.category);
+                  return (
+                    <div key={evt.id} onClick={(e) => onEditEvent(evt, e)} className="p-2.5 bg-slate-800/60 border border-slate-700/60 rounded-xl cursor-pointer">
+                      <div className="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                        <span>{evt.startTime}</span>
+                        <span className={`${meta.text}`}>{meta.label}</span>
+                      </div>
+                      <div className="text-xs font-bold text-white">{evt.title}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // --- MODAL GOOGLE SHEETS ---
+    function GoogleSheetsSyncModal({ isOpen, onClose, sheetUrl, setSheetUrl, onSync, isSyncing, syncStatus }) {
+      const [copied, setCopied] = useState(false);
+
+      const appsScriptCode = `function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  var events = [];
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][0]) {
+      events.push({
+        id: String(data[i][0]), title: String(data[i][1]), date: String(data[i][2]),
+        startTime: String(data[i][3]), endTime: String(data[i][4]), location: String(data[i][5]),
+        category: String(data[i][6]), notes: String(data[i][7])
+      });
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify({ status: "success", events: events }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var contents = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    sheet.clear();
+    sheet.appendRow(["ID", "Título", "Data", "Hora Início", "Hora Término", "Local", "Categoria", "Notas"]);
+    if (contents.events) {
+      contents.events.forEach(function(evt) {
+        sheet.appendRow([evt.id, evt.title, evt.date, evt.startTime, evt.endTime, evt.location, evt.category, evt.notes || ""]);
+      });
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Planilha sincronizada!" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+
+      const copyCode = () => {
+        navigator.clipboard.writeText(appsScriptCode);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-emerald-400 flex items-center gap-2">
+                <IconSheets /> Integrar com Google Sheets
+              </h3>
+              <button onClick={onClose} className="text-slate-400 hover:text-white"><IconX /></button>
+            </div>
+
+            <p className="text-xs text-slate-300">
+              Crie um Google Apps Script na sua planilha (Extensões &gt; Apps Script), cole o código abaixo e faça a Implantação como <strong>Web App</strong> (Acesso: <em>Qualquer pessoa</em>).
+            </p>
+
+            <div className="relative">
+              <button onClick={copyCode} className="absolute right-2 top-2 text-xs font-semibold text-indigo-400 hover:text-indigo-300 bg-slate-900 px-2 py-1 rounded border border-slate-700">
+                {copied ? 'Copiado!' : 'Copiar Código'}
+              </button>
+              <pre className="bg-slate-950 p-3 rounded-xl text-[10px] font-mono text-slate-300 overflow-x-auto border border-slate-800 max-h-36">
+                {appsScriptCode}
+              </pre>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">URL do Web App do Google Script</label>
+              <input
+                type="text"
+                placeholder="https://script.google.com/macros/s/.../exec"
+                value={sheetUrl}
+                onChange={(e) => setSheetUrl(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono"
+              />
+            </div>
+
+            {syncStatus.message && (
+              <div className={`p-3 rounded-xl text-xs border ${
+                syncStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
+                syncStatus.type === 'error' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
+                'bg-indigo-500/10 text-indigo-300 border-indigo-500/30'
+              }`}>
+                {syncStatus.message}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <button onClick={onClose} className="px-4 py-2 text-xs rounded-xl border border-slate-700 text-slate-300">Fechar</button>
+              <button onClick={onSync} disabled={isSyncing} className="px-5 py-2 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-md">
+                {isSyncing ? 'Sincronizando...' : 'Sincronizar Agora'}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Renderizar App
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
