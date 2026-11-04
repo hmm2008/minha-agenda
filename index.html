@@ -51,12 +51,12 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white pb-20 sm:pb-0">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white pb-20 sm:pb-0 transition-colors duration-200">
   <div id="root"></div>
 
   <!-- APLICAÇÃO REACT -->
   <script type="text/babel">
-    const { useState, useEffect, useMemo, useRef } = React;
+    const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
     // --- ÍCONES SVG ---
     const IconCalendar = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
@@ -77,19 +77,21 @@
     const IconSwipeHand = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 11.5V14m0 0v-2.5m0 2.5l-3-3m8 8h5a2 2 0 002-2V9a2 2 0 00-2-2h-3m-4 4V4a2 2 0 00-4 0v7.5"></path></svg>;
     const IconSun = () => <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>;
     const IconMoon = () => <svg className="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>;
+    const IconTag = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5a1 1 0 01.707.293l7 7a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A1 1 0 013 12V7a4 4 0 014-4z"></path></svg>;
+    const IconRefresh = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>;
 
     // --- CONFIGURAÇÃO DE CATEGORIAS E CORES ---
     const COLOR_OPTIONS = [
-      { id: 'indigo', label: 'Índigo', bg: 'bg-indigo-500/15', text: 'text-indigo-600 dark:text-indigo-400', border: 'border-indigo-500/30', dot: 'bg-indigo-500' },
-      { id: 'emerald', label: 'Esmeralda', bg: 'bg-emerald-500/15', text: 'text-emerald-600 dark:text-emerald-400', border: 'border-emerald-500/30', dot: 'bg-emerald-500' },
-      { id: 'rose', label: 'Rosa / Vermelho', bg: 'bg-rose-500/15', text: 'text-rose-600 dark:text-rose-400', border: 'border-rose-500/30', dot: 'bg-rose-500' },
-      { id: 'violet', label: 'Violeta / Roxo', bg: 'bg-violet-500/15', text: 'text-violet-600 dark:text-violet-400', border: 'border-violet-500/30', dot: 'bg-violet-500' },
-      { id: 'amber', label: 'Âmbar / Amarelo', bg: 'bg-amber-500/15', text: 'text-amber-600 dark:text-amber-400', border: 'border-amber-500/30', dot: 'bg-amber-500' },
-      { id: 'cyan', label: 'Ciano', bg: 'bg-cyan-500/15', text: 'text-cyan-600 dark:text-cyan-400', border: 'border-cyan-500/30', dot: 'bg-cyan-500' },
-      { id: 'pink', label: 'Pink', bg: 'bg-pink-500/15', text: 'text-pink-600 dark:text-pink-400', border: 'border-pink-500/30', dot: 'bg-pink-500' },
-      { id: 'orange', label: 'Laranja', bg: 'bg-orange-500/15', text: 'text-orange-600 dark:text-orange-400', border: 'border-orange-500/30', dot: 'bg-orange-500' },
-      { id: 'teal', label: 'Verde-Água', bg: 'bg-teal-500/15', text: 'text-teal-600 dark:text-teal-400', border: 'border-teal-500/30', dot: 'bg-teal-500' },
-      { id: 'sky', label: 'Céu (Azul)', bg: 'bg-sky-500/15', text: 'text-sky-600 dark:text-sky-400', border: 'border-sky-500/30', dot: 'bg-sky-500' },
+      { id: 'indigo', label: 'Índigo', bg: 'bg-indigo-500/15 dark:bg-indigo-500/20', text: 'text-indigo-700 dark:text-indigo-300', border: 'border-indigo-500/30', dot: 'bg-indigo-500' },
+      { id: 'emerald', label: 'Esmeralda', bg: 'bg-emerald-500/15 dark:bg-emerald-500/20', text: 'text-emerald-700 dark:text-emerald-300', border: 'border-emerald-500/30', dot: 'bg-emerald-500' },
+      { id: 'rose', label: 'Rosa / Vermelho', bg: 'bg-rose-500/15 dark:bg-rose-500/20', text: 'text-rose-700 dark:text-rose-300', border: 'border-rose-500/30', dot: 'bg-rose-500' },
+      { id: 'violet', label: 'Violeta / Roxo', bg: 'bg-violet-500/15 dark:bg-violet-500/20', text: 'text-violet-700 dark:text-violet-300', border: 'border-violet-500/30', dot: 'bg-violet-500' },
+      { id: 'amber', label: 'Âmbar / Amarelo', bg: 'bg-amber-500/15 dark:bg-amber-500/20', text: 'text-amber-700 dark:text-amber-300', border: 'border-amber-500/30', dot: 'bg-amber-500' },
+      { id: 'cyan', label: 'Ciano', bg: 'bg-cyan-500/15 dark:bg-cyan-500/20', text: 'text-cyan-700 dark:text-cyan-300', border: 'border-cyan-500/30', dot: 'bg-cyan-500' },
+      { id: 'pink', label: 'Pink', bg: 'bg-pink-500/15 dark:bg-pink-500/20', text: 'text-pink-700 dark:text-pink-300', border: 'border-pink-500/30', dot: 'bg-pink-500' },
+      { id: 'orange', label: 'Laranja', bg: 'bg-orange-500/15 dark:bg-orange-500/20', text: 'text-orange-700 dark:text-orange-300', border: 'border-orange-500/30', dot: 'bg-orange-500' },
+      { id: 'teal', label: 'Verde-Água', bg: 'bg-teal-500/15 dark:bg-teal-500/20', text: 'text-teal-700 dark:text-teal-300', border: 'border-teal-500/30', dot: 'bg-teal-500' },
+      { id: 'sky', label: 'Céu (Azul)', bg: 'bg-sky-500/15 dark:bg-sky-500/20', text: 'text-sky-700 dark:text-sky-300', border: 'border-sky-500/30', dot: 'bg-sky-500' },
     ];
 
     const DEFAULT_CATEGORIES = [
@@ -228,6 +230,105 @@
         localStorage.setItem('agenda_sheet_url', sheetUrl);
       }, [sheetUrl]);
 
+      // --- SINCRONIZAÇÃO AUTOMÁTICA (PULL - LEITURA DA NUVEM VIA GET) ---
+      const fetchFromSheets = useCallback(async (silent = false) => {
+        const currentUrl = localStorage.getItem('agenda_sheet_url') || sheetUrl;
+        if (!currentUrl || !currentUrl.trim()) return;
+
+        if (!silent) {
+          setIsSyncing(true);
+          setSyncStatus({ type: 'info', message: 'A carregar dados da Google Sheets...' });
+        }
+
+        try {
+          const response = await fetch(currentUrl.trim(), { method: 'GET' });
+          const resData = await response.json();
+
+          if (resData && resData.status === 'success') {
+            if (Array.isArray(resData.events)) {
+              setEvents(resData.events);
+              localStorage.setItem('agenda_events_v3', JSON.stringify(resData.events));
+            }
+            if (Array.isArray(resData.categories) && resData.categories.length > 0) {
+              setCategories(resData.categories);
+              localStorage.setItem('agenda_categories_v3', JSON.stringify(resData.categories));
+            }
+            if (!silent) {
+              setSyncStatus({ type: 'success', message: 'Dados atualizados a partir da nuvem!' });
+            }
+          }
+        } catch (err) {
+          console.error("Erro na leitura da Google Sheets:", err);
+          if (!silent) {
+            setSyncStatus({ type: 'error', message: 'Erro ao carregar dados da Google Sheets.' });
+          }
+        } finally {
+          if (!silent) setIsSyncing(false);
+        }
+      }, [sheetUrl]);
+
+      // --- SINCRONIZAÇÃO AUTOMÁTICA (PUSH - ESCRITA NA NUVEM VIA POST) ---
+      const pushToSheets = async (targetEvents = events, targetCategories = categories) => {
+        const currentUrl = localStorage.getItem('agenda_sheet_url') || sheetUrl;
+        if (!currentUrl || !currentUrl.trim()) return;
+
+        setIsSyncing(true);
+        setSyncStatus({ type: 'info', message: 'A guardar alterações na nuvem...' });
+
+        try {
+          const response = await fetch(currentUrl.trim(), {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ events: targetEvents, categories: targetCategories }),
+          });
+
+          const resData = await response.json();
+
+          if (resData.status === 'success') {
+            setSyncStatus({ type: 'success', message: 'Alterações guardadas na Google Sheets!' });
+          } else {
+            throw new Error(resData.message || 'Erro ao guardar dados.');
+          }
+        } catch (err) {
+          console.error("Erro no envio para Google Sheets:", err);
+          setSyncStatus({ type: 'error', message: 'Erro na conexão com a Google Sheets.' });
+        } finally {
+          setIsSyncing(false);
+        }
+      };
+
+      // Auto-sync ao abrir a aplicação no dispositivo
+      useEffect(() => {
+        if (sheetUrl && sheetUrl.trim()) {
+          fetchFromSheets(true);
+        }
+      }, []);
+
+      // Auto-sync ao focar na janela / mudar de separador
+      useEffect(() => {
+        const handleFocus = () => {
+          if (document.visibilityState === 'visible' && sheetUrl && sheetUrl.trim()) {
+            fetchFromSheets(true);
+          }
+        };
+
+        window.addEventListener('focus', handleFocus);
+        document.addEventListener('visibilitychange', handleFocus);
+        return () => {
+          window.removeEventListener('focus', handleFocus);
+          document.removeEventListener('visibilitychange', handleFocus);
+        };
+      }, [fetchFromSheets, sheetUrl]);
+
+      // Polling de sincronização automática a cada 15 segundos
+      useEffect(() => {
+        if (!sheetUrl || !sheetUrl.trim()) return;
+        const interval = setInterval(() => {
+          fetchFromSheets(true);
+        }, 15000);
+        return () => clearInterval(interval);
+      }, [fetchFromSheets, sheetUrl]);
+
       const filteredEvents = useMemo(() => {
         return events.filter(evt => {
           const matchesSearch = 
@@ -313,42 +414,6 @@
         setIsEventModalOpen(true);
       };
 
-      const syncWithSheets = async (targetEvents = events, targetCategories = categories) => {
-        if (!sheetUrl.trim()) return;
-
-        setIsSyncing(true);
-        setSyncStatus({ type: 'info', message: 'Sincronizando compromissos e categorias...' });
-
-        try {
-          const response = await fetch(sheetUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ events: targetEvents, categories: targetCategories }),
-          });
-
-          const resData = await response.json();
-
-          if (resData.status === 'success') {
-            if (resData.events && Array.isArray(resData.events) && resData.events.length > 0) {
-              setEvents(resData.events);
-            }
-            if (resData.categories && Array.isArray(resData.categories) && resData.categories.length > 0) {
-              setCategories(resData.categories);
-            }
-            setSyncStatus({ type: 'success', message: 'Sincronizado com sucesso!' });
-          } else {
-            throw new Error(resData.message || 'Erro ao comunicar com o Google Sheets.');
-          }
-        } catch (err) {
-          setSyncStatus({ 
-            type: 'error', 
-            message: 'Erro na conexão. Verifique a URL do Apps Script.' 
-          });
-        } finally {
-          setIsSyncing(false);
-        }
-      };
-
       const handleSaveEvent = (e) => {
         e.preventDefault();
         if (!formData.title.trim()) return;
@@ -365,7 +430,7 @@
         setIsEventModalOpen(false);
 
         if (sheetUrl.trim()) {
-          syncWithSheets(updatedEvents, categories);
+          pushToSheets(updatedEvents, categories);
         }
       };
 
@@ -376,7 +441,7 @@
         setIsCategoryModalOpen(false);
 
         if (sheetUrl.trim()) {
-          syncWithSheets(events, updatedCats);
+          pushToSheets(events, updatedCats);
         }
       };
 
@@ -387,7 +452,7 @@
         setIsEventModalOpen(false);
 
         if (sheetUrl.trim()) {
-          syncWithSheets(updatedEvents, categories);
+          pushToSheets(updatedEvents, categories);
         }
       };
 
@@ -396,7 +461,7 @@
           setSyncStatus({ type: 'error', message: 'Insira a URL do Apps Script do Google.' });
           return;
         }
-        await syncWithSheets(events, categories);
+        await fetchFromSheets(false);
       };
 
       // FORMATADOR DA BARRA DE NAVEGAÇÃO DE DATAS
@@ -448,143 +513,162 @@
                   Agenda Pessoal Francisco
                 </h1>
                 <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Mobile & Sheets
+                  <span className={`w-1.5 h-1.5 rounded-full ${isSyncing ? 'bg-amber-500 animate-ping' : sheetUrl ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></span>
+                  {isSyncing ? 'A sincronizar...' : sheetUrl ? 'Auto-sync Sheets Ativo' : 'Apenas Local'}
                 </p>
               </div>
             </div>
 
-            {/* Alternador de Vistas */}
-            <div className="flex items-center bg-slate-200/80 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-300/60 dark:border-slate-700/60">
+            {/* SELETOR DE MODO (MÊS, SEMANA, DIA) */}
+            <div className="hidden md:flex items-center gap-1 bg-slate-200/80 dark:bg-slate-800/70 p-1 rounded-xl border border-slate-300 dark:border-slate-700/60">
               <button
                 onClick={() => setViewMode('month')}
-                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
                   viewMode === 'month' 
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <IconGrid />
-                <span className="hidden sm:inline">Mês</span>
+                Mês
               </button>
               <button
                 onClick={() => setViewMode('week')}
-                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
                   viewMode === 'week' 
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <IconDays />
-                <span className="hidden sm:inline">Semana</span>
+                Semana
               </button>
               <button
                 onClick={() => setViewMode('day')}
-                className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
                   viewMode === 'day' 
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <IconClock />
-                <span className="hidden sm:inline">Dia</span>
+                Dia
               </button>
             </div>
 
-            {/* Ações Rápidas & Alternador de Tema */}
+            {/* AÇÕES (TEMA, SHEETS, NOVO EVENTO) */}
             <div className="flex items-center gap-1.5 sm:gap-2">
-              {/* Botão de Modo Claro / Escuro */}
+              {/* Botão de Tema Light / Dark */}
               <button
                 onClick={toggleTheme}
-                className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700/60 bg-slate-200/70 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-all flex items-center gap-1.5 shadow-sm"
+                className="p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all shadow-sm"
                 title={theme === 'dark' ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
-                aria-label="Alternar Tema"
               >
                 {theme === 'dark' ? <IconSun /> : <IconMoon />}
-                <span className="hidden md:inline">{theme === 'dark' ? 'Claro' : 'Escuro'}</span>
               </button>
 
               <button
                 onClick={() => setIsSyncModalOpen(true)}
-                className="p-2 sm:px-3.5 sm:py-2 text-xs font-medium rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all flex items-center gap-1.5"
-                title="Google Sheets"
+                className="px-2.5 sm:px-3 py-2 text-xs font-medium rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all flex items-center gap-1.5 shadow-sm"
+                title="Conectar com Google Sheets / Drive"
               >
                 <IconSheets />
-                <span className="hidden md:inline">Google Sheets</span>
+                <span className="hidden sm:inline">Google Sheets</span>
               </button>
 
               <button
                 onClick={() => openNewEventModal()}
-                className="hidden sm:flex px-4 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 text-white hover:from-indigo-600 hover:to-violet-700 shadow-md shadow-indigo-500/25 active:scale-95 items-center gap-1.5"
+                className="px-3 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-1"
               >
                 <IconPlus />
-                <span>Novo Evento</span>
+                <span className="hidden sm:inline">Novo Evento</span>
               </button>
             </div>
           </header>
 
-          {/* BARRA NAVEGAÇÃO E PESQUISA */}
-          <div className="bg-slate-200/50 dark:bg-slate-900/50 border-b border-slate-300/60 dark:border-slate-800/60 px-3 sm:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3">
+          {/* BARRA DE SELEÇÃO RÁPIDA DE VISTA PARA MOBILE */}
+          <div className="md:hidden bg-slate-200/90 dark:bg-slate-900/90 border-b border-slate-300 dark:border-slate-800 p-1.5 flex justify-around">
+            <button
+              onClick={() => setViewMode('month')}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg text-center transition-all ${
+                viewMode === 'month' ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 dark:text-slate-400'
+              }`}
+            >
+              Mês
+            </button>
+            <button
+              onClick={() => setViewMode('week')}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg text-center transition-all ${
+                viewMode === 'week' ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 dark:text-slate-400'
+              }`}
+            >
+              Semana
+            </button>
+            <button
+              onClick={() => setViewMode('day')}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg text-center transition-all ${
+                viewMode === 'day' ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 dark:text-slate-400'
+              }`}
+            >
+              Dia
+            </button>
+          </div>
+
+          {/* SUB-BARRA DE NAVEGAÇÃO E FILTROS */}
+          <div className="bg-slate-50 dark:bg-slate-900/40 border-b border-slate-200 dark:border-slate-800/60 px-3 sm:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={handleToday}
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 transition-all shadow-sm"
+                className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-sm"
               >
                 Hoje
               </button>
-              
-              <div className="flex items-center gap-1">
+
+              <div className="flex items-center gap-0.5">
                 <button
                   onClick={handlePrev}
-                  className="p-2 rounded-lg bg-white/80 dark:bg-slate-800/60 border border-slate-300/60 dark:border-transparent hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all"
+                  className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
                   aria-label="Anterior"
                 >
                   <IconChevronLeft />
                 </button>
                 <button
                   onClick={handleNext}
-                  className="p-2 rounded-lg bg-white/80 dark:bg-slate-800/60 border border-slate-300/60 dark:border-transparent hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all"
+                  className="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
                   aria-label="Próximo"
                 >
                   <IconChevronRight />
                 </button>
               </div>
 
-              <h2 className="text-sm sm:text-lg font-bold text-slate-800 dark:text-slate-100 capitalize truncate">
+              <h2 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-slate-100">
                 {headerDateLabel}
               </h2>
             </div>
 
-            {/* Dica de Deslizamento para Mobile */}
-            <div className="flex sm:hidden items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-800/40 px-2.5 py-1 rounded-full border border-slate-300/60 dark:border-slate-700/50">
-              <IconSwipeHand />
-              <span>Deslize p/ lado</span>
-            </div>
-
-            <div className="flex items-center gap-2 w-full lg:w-auto">
-              <div className="relative flex-1 lg:w-56">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                  <IconSearch />
-                </div>
+            {/* FILTROS E PESQUISA */}
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <div className="relative flex-1 md:w-56">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><IconSearch /></span>
                 <input
                   type="text"
-                  placeholder="Pesquisar..."
+                  placeholder="Buscar..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/80 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 shadow-sm"
+                  className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                 />
               </div>
 
-              <div className="flex items-center gap-1 bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/80 rounded-xl px-2 py-1.5 shadow-sm">
-                <IconFilter />
+              <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 rounded-xl px-2.5 py-1.5">
+                <span className="text-slate-400"><IconFilter /></span>
                 <select
                   value={selectedCategoryFilter}
                   onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                  className="bg-transparent text-xs text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[100px] sm:max-w-none truncate"
+                  className="bg-transparent text-xs text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
                 >
-                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Todas</option>
+                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">Todas as Categorias</option>
                   {categories.map(cat => (
-                    <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+                    <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
                       {cat.label}
                     </option>
                   ))}
@@ -593,12 +677,18 @@
             </div>
           </div>
 
-          {/* ÁREA PRINCIPAL COM TOUCH SWIPE */}
+          {/* DICA VISUAL PARA MOBILE SWIPE */}
+          <div className="sm:hidden bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] text-center py-1 flex items-center justify-center gap-1">
+            <IconSwipeHand />
+            <span>Deslize para a esquerda ou direita para mudar de data</span>
+          </div>
+
+          {/* CONTEÚDO PRINCIPAL (COM SUPORTE SWIPE) */}
           <main 
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="flex-1 p-2 sm:p-6 max-w-[1600px] w-full mx-auto touch-swipe-zone"
+            className="flex-1 p-3 sm:p-6 max-w-[1600px] w-full mx-auto overflow-x-auto touch-swipe-zone"
           >
             {viewMode === 'month' && (
               <MonthView 
@@ -636,27 +726,27 @@
             )}
           </main>
 
-          {/* BOTÃO FLUTUANTE (FAB) PARA MOBILE */}
+          {/* BOTÃO FLUTUANTE NO MOBILE (FAB) */}
           <button
             onClick={() => openNewEventModal()}
-            className="sm:hidden fixed bottom-5 right-5 z-40 p-4 bg-gradient-to-tr from-indigo-500 to-violet-600 text-white rounded-full shadow-2xl shadow-indigo-500/50 active:scale-90 transition-transform flex items-center justify-center ring-4 ring-white dark:ring-slate-950"
-            aria-label="Adicionar Novo Evento"
+            className="sm:hidden fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-indigo-600 text-white shadow-xl flex items-center justify-center active:scale-95 transition-all"
+            aria-label="Adicionar compromisso"
           >
             <IconPlus />
           </button>
 
-          {/* MODAL: AGENDAR / EDITAR EVENTO */}
+          {/* MODAL: CRIAR / EDITAR EVENTO */}
           {isEventModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 dark:bg-slate-950/80 backdrop-blur-sm">
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-900/50">
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div className="px-5 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     {editingEvent ? <IconEdit /> : <IconPlus />}
-                    {editingEvent ? 'Editar Compromisso' : 'Novo Compromisso'}
+                    {editingEvent ? 'Editar Compromisso' : 'Agendar Novo Compromisso'}
                   </h3>
                   <button 
                     onClick={() => setIsEventModalOpen(false)}
-                    className="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all"
                   >
                     <IconX />
                   </button>
@@ -664,7 +754,7 @@
 
                 <form onSubmit={handleSaveEvent} className="p-5 space-y-4 overflow-y-auto flex-1">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
                       Título do Evento *
                     </label>
                     <input
@@ -673,29 +763,33 @@
                       placeholder="Ex: Reunião, Treino, Consulta..."
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Data *</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                        Data *
+                      </label>
                       <input
                         type="date"
                         required
                         value={formData.date}
                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-all"
                       />
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Categoria</label>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                          Categoria
+                        </label>
                         <button
                           type="button"
                           onClick={() => setIsCategoryModalOpen(true)}
-                          className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+                          className="text-[10px] text-indigo-600 dark:text-indigo-400 hover:underline font-semibold"
                         >
                           + Criar Nova
                         </button>
@@ -703,64 +797,72 @@
                       <select
                         value={formData.category}
                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-all cursor-pointer"
                       >
                         {categories.map(cat => (
-                          <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">{cat.label}</option>
+                          <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-200">
+                            {cat.label}
+                          </option>
                         ))}
                       </select>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Início</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                        Início
+                      </label>
                       <input
                         type="time"
                         required
                         value={formData.startTime}
                         onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-all"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Fim</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                        Término
+                      </label>
                       <input
                         type="time"
                         required
                         value={formData.endTime}
                         onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Local / Link</label>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                      Local
+                    </label>
                     <div className="relative">
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        <IconMapPin />
-                      </div>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><IconMapPin /></span>
                       <input
                         type="text"
-                        placeholder="Ex: Sala 2 ou Google Meet"
+                        placeholder="Ex: Endereço ou Google Meet"
                         value={formData.location}
                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl pl-9 pr-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Notas / Descrição</label>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                      Notas
+                    </label>
                     <textarea
-                      rows="3"
-                      placeholder="Adicione detalhes..."
+                      rows={2}
+                      placeholder="Adicione observações..."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
-                    ></textarea>
+                      className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all resize-none"
+                    />
                   </div>
 
                   <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
@@ -768,10 +870,10 @@
                       <button
                         type="button"
                         onClick={() => handleDeleteEvent(editingEvent.id)}
-                        className="px-4 py-2.5 text-xs font-semibold rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 flex items-center gap-1.5"
+                        className="px-3.5 py-2 text-xs font-semibold rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 transition-all flex items-center gap-1"
                       >
                         <IconTrash />
-                        Excluir
+                        Apagar
                       </button>
                     ) : <div />}
 
@@ -779,16 +881,16 @@
                       <button
                         type="button"
                         onClick={() => setIsEventModalOpen(false)}
-                        className="px-4 py-2.5 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
                       >
                         Cancelar
                       </button>
                       <button
                         type="submit"
-                        className="px-5 py-2.5 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
+                        className="px-5 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-500/20 transition-all flex items-center gap-1"
                       >
                         <IconCheck />
-                        Salvar
+                        Guardar
                       </button>
                     </div>
                   </div>
@@ -797,7 +899,15 @@
             </div>
           )}
 
-          {/* MODAL: GOOGLE SHEETS SYNC */}
+          {/* MODAL: CRIAR NOVA CATEGORIA */}
+          {isCategoryModalOpen && (
+            <NewCategoryModal
+              onClose={() => setIsCategoryModalOpen(false)}
+              onSave={handleAddCategory}
+            />
+          )}
+
+          {/* MODAL: CONFIGURAÇÃO GOOGLE SHEETS */}
           {isSyncModalOpen && (
             <GoogleSheetsSyncModal
               isOpen={isSyncModalOpen}
@@ -809,85 +919,79 @@
               syncStatus={syncStatus}
             />
           )}
-
-          {/* MODAL: CRIAR NOVA CATEGORIA */}
-          {isCategoryModalOpen && (
-            <CategoryCreateModal
-              isOpen={isCategoryModalOpen}
-              onClose={() => setIsCategoryModalOpen(false)}
-              onAddCategory={handleAddCategory}
-            />
-          )}
         </div>
       );
     }
 
-    // --- MODAL PARA CRIAR CATEGORIAS ---
-    function CategoryCreateModal({ isOpen, onClose, onAddCategory }) {
-      const [name, setName] = useState('');
-      const [selectedColor, setSelectedColor] = useState('indigo');
+    // --- COMPONENTE: CRIAR NOVA CATEGORIA ---
+    function NewCategoryModal({ onClose, onSave }) {
+      const [label, setLabel] = useState('');
+      const [selectedColor, setSelectedColor] = useState(COLOR_OPTIONS[0].id);
 
       const handleSubmit = (e) => {
         e.preventDefault();
-        if (!name.trim()) return;
+        if (!label.trim()) return;
 
         const newCat = {
           id: 'cat_' + Date.now(),
-          label: name.trim(),
+          label: label.trim(),
           color: selectedColor
         };
-        onAddCategory(newCat);
+        onSave(newCat);
       };
 
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 dark:bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
-            <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-indigo-500"></span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full shadow-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <IconTag />
                 Criar Nova Categoria
               </h3>
-              <button onClick={onClose} className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1"><IconX /></button>
+              <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"><IconX /></button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Nome da Categoria *</label>
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                  Nome da Categoria
+                </label>
                 <input
                   type="text"
                   required
-                  placeholder="Ex: Viagens, Projetos, Treino..."
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  placeholder="Ex: Viagens, Projetos, Música..."
+                  value={label}
+                  onChange={(e) => setLabel(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-2">Escolher Cor</label>
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar p-1">
-                  {COLOR_OPTIONS.map((col) => (
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">
+                  Selecione a Cor
+                </label>
+                <div className="grid grid-cols-5 gap-2">
+                  {COLOR_OPTIONS.map((c) => (
                     <button
-                      key={col.id}
+                      key={c.id}
                       type="button"
-                      onClick={() => setSelectedColor(col.id)}
-                      className={`p-2 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all ${col.bg} ${col.text} ${col.border} ${
-                        selectedColor === col.id ? 'ring-2 ring-indigo-500 font-bold shadow-md' : 'opacity-70 hover:opacity-100'
+                      onClick={() => setSelectedColor(c.id)}
+                      className={`p-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all ${c.bg} ${c.border} ${
+                        selectedColor === c.id ? 'ring-2 ring-indigo-500 scale-105' : 'opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <span className={`w-3 h-3 rounded-full ${col.dot} shrink-0`}></span>
-                      <span className="truncate">{col.label}</span>
+                      <span className={`w-3.5 h-3.5 rounded-full ${c.dot}`}></span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-                <button type="button" onClick={onClose} className="px-4 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
+                <button type="button" onClick={onClose} className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">
                   Cancelar
                 </button>
-                <button type="submit" className="px-5 py-2 text-xs rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-md shadow-indigo-500/20">
-                  Adicionar Categoria
+                <button type="submit" className="px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 text-white hover:bg-indigo-500">
+                  Adicionar
                 </button>
               </div>
             </form>
@@ -896,22 +1000,21 @@
       );
     }
 
-    // --- VISTA MÊS ---
+    // --- VISTA DO MÊS ---
     function MonthView({ currentDate, events, getCategoryMeta, onSelectDate, onAddEventOnDate, onEditEvent }) {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
 
       const calendarDays = useMemo(() => {
-        const firstDayOfMonth = new Date(year, month, 1);
-        const lastDayOfMonth = new Date(year, month + 1, 0);
-
-        let startingDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7;
-        const totalDays = lastDayOfMonth.getDate();
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        let startDayOfWeek = (firstDay.getDay() + 6) % 7;
+        const totalDays = lastDay.getDate();
 
         const days = [];
-
         const prevMonthLastDay = new Date(year, month, 0).getDate();
-        for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+
+        for (let i = startDayOfWeek - 1; i >= 0; i--) {
           const prevDate = new Date(year, month - 1, prevMonthLastDay - i);
           days.push({ date: prevDate, isCurrentMonth: false, dateKey: formatDateKey(prevDate) });
         }
@@ -921,8 +1024,8 @@
           days.push({ date: currDate, isCurrentMonth: true, dateKey: formatDateKey(currDate) });
         }
 
-        const remainingCells = (7 - (days.length % 7)) % 7;
-        for (let i = 1; i <= remainingCells; i++) {
+        const remaining = (7 - (days.length % 7)) % 7;
+        for (let i = 1; i <= remaining; i++) {
           const nextDate = new Date(year, month + 1, i);
           days.push({ date: nextDate, isCurrentMonth: false, dateKey: formatDateKey(nextDate) });
         }
@@ -934,12 +1037,10 @@
       const todayKey = formatDateKey(new Date());
 
       return (
-        <div className="bg-white/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col">
-          <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/80 text-center text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 py-2.5">
+        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl flex flex-col">
+          <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 text-center text-[11px] font-semibold text-slate-500 dark:text-slate-400 py-2.5">
             {weekDayLabels.map((day, idx) => (
-              <div key={idx} className={idx >= 5 ? 'text-indigo-600 dark:text-indigo-400/80' : ''}>
-                {day}
-              </div>
+              <div key={idx} className={idx >= 5 ? 'text-indigo-600 dark:text-indigo-400' : ''}>{day}</div>
             ))}
           </div>
 
@@ -952,44 +1053,36 @@
                 <div
                   key={index}
                   onClick={() => onSelectDate(dayObj.date)}
-                  className={`min-h-[85px] sm:min-h-[110px] p-1.5 sm:p-2 bg-white dark:bg-slate-900/90 transition-all group hover:bg-slate-50 dark:hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
-                    !dayObj.isCurrentMonth ? 'opacity-40 bg-slate-100/60 dark:bg-slate-950/40' : ''
+                  className={`min-h-[85px] sm:min-h-[105px] p-1.5 sm:p-2 bg-white dark:bg-slate-900/90 transition-all group hover:bg-indigo-50/50 dark:hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
+                    !dayObj.isCurrentMonth ? 'opacity-40 bg-slate-50 dark:bg-slate-950/40' : ''
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span
-                      className={`text-[10px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all ${
-                        isToday
-                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 ring-1 sm:ring-2 ring-indigo-400'
-                          : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'
-                      }`}
-                    >
+                    <span className={`text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all ${
+                      isToday ? 'bg-indigo-600 text-white shadow ring-2 ring-indigo-400' : 'text-slate-700 dark:text-slate-300'
+                    }`}>
                       {dayObj.date.getDate()}
                     </span>
 
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onAddEventOnDate(dayObj.dateKey);
-                      }}
-                      className="opacity-0 group-hover:opacity-100 p-1 rounded bg-slate-200 dark:bg-slate-800 hover:bg-indigo-600 text-slate-600 dark:text-slate-300 hover:text-white transition-all hidden sm:block"
-                      title="Novo Evento"
+                      onClick={(e) => { e.stopPropagation(); onAddEventOnDate(dayObj.dateKey); }}
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded bg-slate-200 dark:bg-slate-800 hover:bg-indigo-600 text-slate-700 dark:text-slate-300 hover:text-white transition-all"
                     >
                       <IconPlus />
                     </button>
                   </div>
 
-                  <div className="space-y-1 flex-1 overflow-y-auto max-h-[50px] sm:max-h-[85px] custom-scrollbar">
+                  <div className="space-y-1 flex-1 overflow-y-auto max-h-[75px] custom-scrollbar">
                     {dayEvents.map((evt) => {
                       const meta = getCategoryMeta(evt.category);
                       return (
                         <div
                           key={evt.id}
                           onClick={(e) => onEditEvent(evt, e)}
-                          className={`px-1.5 py-0.5 sm:py-1 rounded text-[9px] sm:text-[11px] border font-medium truncate flex items-center justify-between gap-1 ${meta.bg} ${meta.text} ${meta.border}`}
+                          className={`px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] border font-medium truncate transition-all flex items-center justify-between gap-1 ${meta.bg} ${meta.text} ${meta.border}`}
                         >
                           <span className="truncate">{evt.title}</span>
-                          <span className="hidden sm:inline text-[9px] opacity-75 font-mono shrink-0">{evt.startTime}</span>
+                          <span className="text-[9px] font-mono shrink-0 hidden sm:inline">{evt.startTime}</span>
                         </div>
                       );
                     })}
@@ -1002,7 +1095,7 @@
       );
     }
 
-    // --- VISTA SEMANA ---
+    // --- VISTA DA SEMANA ---
     function WeekView({ currentDate, events, getCategoryMeta, onAddEvent, onEditEvent }) {
       const hours = Array.from({ length: 15 }, (_, i) => i + 8);
 
@@ -1025,13 +1118,15 @@
       }, [currentDate]);
 
       return (
-        <div className="bg-white/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col overflow-x-auto">
-          <div className="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 sticky top-0 z-10 min-w-[650px]">
-            <div className="p-2 sm:p-3 text-center text-xs font-bold text-slate-500 border-r border-slate-200 dark:border-slate-800">Hora</div>
+        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl flex flex-col overflow-x-auto">
+          <div className="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 sticky top-0 z-10 min-w-[650px]">
+            <div className="p-2.5 text-center text-xs font-bold text-slate-400 border-r border-slate-200 dark:border-slate-800">
+              Hora
+            </div>
             {weekDays.map((wd, i) => (
-              <div key={i} className="p-2 sm:p-3 text-center border-r border-slate-200/80 dark:border-slate-800/60 last:border-r-0">
-                <span className="text-[10px] sm:text-xs uppercase font-semibold text-slate-500 dark:text-slate-400 block">{wd.label}</span>
-                <span className={`inline-block mt-0.5 text-xs sm:text-sm font-bold px-2 py-0.5 rounded-full ${wd.isToday ? 'bg-indigo-600 text-white' : 'text-slate-800 dark:text-slate-200'}`}>
+              <div key={i} className="p-2.5 text-center border-r border-slate-200 dark:border-slate-800/60 last:border-r-0">
+                <span className="text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400 block">{wd.label}</span>
+                <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-full ${wd.isToday ? 'bg-indigo-600 text-white' : 'text-slate-800 dark:text-slate-200'}`}>
                   {wd.dayNum}
                 </span>
               </div>
@@ -1041,9 +1136,10 @@
           <div className="divide-y divide-slate-200 dark:divide-slate-800/50 min-w-[650px]">
             {hours.map((hour) => {
               const hourStr = `${String(hour).padStart(2, '0')}:00`;
+
               return (
-                <div key={hour} className="grid grid-cols-8 min-h-[56px] sm:min-h-[64px]">
-                  <div className="p-1.5 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-mono font-medium text-center flex items-center justify-center bg-slate-50 dark:bg-slate-900/40">
+                <div key={hour} className="grid grid-cols-8 min-h-[56px]">
+                  <div className="p-1 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-mono font-medium text-center flex items-center justify-center bg-slate-50/50 dark:bg-slate-900/40">
                     {hourStr}
                   </div>
 
@@ -1058,7 +1154,7 @@
                       <div
                         key={dayIdx}
                         onClick={() => onAddEvent(wd.dateKey, hourStr)}
-                        className="p-1 border-r border-slate-200/60 dark:border-slate-800/40 last:border-r-0 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-all cursor-pointer"
+                        className="p-1 border-r border-slate-200/60 dark:border-slate-800/40 last:border-r-0 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-all cursor-pointer relative"
                       >
                         {hourEvents.map(evt => {
                           const meta = getCategoryMeta(evt.category);
@@ -1066,13 +1162,10 @@
                             <div
                               key={evt.id}
                               onClick={(e) => onEditEvent(evt, e)}
-                              className={`p-1.5 rounded-lg border text-xs font-medium ${meta.bg} ${meta.text} ${meta.border} mb-1`}
+                              className={`p-1.5 rounded-lg border text-xs font-medium ${meta.bg} ${meta.text} ${meta.border} shadow-sm mb-1`}
                             >
                               <div className="font-semibold truncate text-[11px]">{evt.title}</div>
-                              <div className="text-[9px] opacity-80 flex items-center gap-1 mt-0.5 font-mono">
-                                <IconClock />
-                                {evt.startTime}
-                              </div>
+                              <div className="text-[9px] opacity-80 font-mono">{evt.startTime} - {evt.endTime}</div>
                             </div>
                           );
                         })}
@@ -1087,39 +1180,39 @@
       );
     }
 
-    // --- VISTA DIA ---
+    // --- VISTA DO DIA ---
     function DayView({ currentDate, events, getCategoryMeta, onAddEvent, onEditEvent, onDeleteEvent }) {
       const dateKey = formatDateKey(currentDate);
       const dayEvents = events.filter(e => e.date === dateKey);
       const hours = Array.from({ length: 16 }, (_, i) => i + 7);
 
       return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="lg:col-span-2 bg-white/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col">
-            <div className="p-3.5 border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 flex items-center justify-between">
-              <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                <IconClock /> Horário Detalhado do Dia
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl flex flex-col">
+            <div className="p-3.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 flex items-center justify-between">
+              <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <IconClock />
+                Linha do Tempo
               </h3>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">{dayEvents.length} evento(s)</span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                {dayEvents.length} compromisso(s)
+              </span>
             </div>
 
             <div className="divide-y divide-slate-200 dark:divide-slate-800/60 overflow-y-auto">
               {hours.map((hour) => {
                 const hourStr = `${String(hour).padStart(2, '0')}:00`;
-                const matchingEvents = dayEvents.filter(e => {
-                  const startH = parseInt(e.startTime.split(':')[0], 10);
-                  return startH === hour;
-                });
+                const matchingEvents = dayEvents.filter(e => parseInt(e.startTime.split(':')[0], 10) === hour);
 
                 return (
-                  <div key={hour} className="flex min-h-[64px] sm:min-h-[72px] hover:bg-slate-100/50 dark:hover:bg-slate-800/30">
-                    <div className="w-16 sm:w-24 p-2 sm:p-3 border-r border-slate-200 dark:border-slate-800 text-[11px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 flex items-center justify-center bg-slate-50 dark:bg-slate-900/40 shrink-0">
+                  <div key={hour} className="flex min-h-[64px] hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all">
+                    <div className="w-16 sm:w-20 p-2 border-r border-slate-200 dark:border-slate-800 text-[11px] font-mono text-slate-400 flex items-center justify-center bg-slate-50/50 dark:bg-slate-900/40 shrink-0">
                       {hourStr}
                     </div>
 
                     <div 
                       onClick={() => onAddEvent(dateKey, hourStr)}
-                      className="flex-1 p-2 flex flex-col gap-2 cursor-pointer hover:bg-indigo-50/40 dark:hover:bg-indigo-950/10"
+                      className="flex-1 p-2 flex flex-col gap-2 cursor-pointer hover:bg-indigo-50/30 dark:hover:bg-indigo-950/10 transition-all"
                     >
                       {matchingEvents.map(evt => {
                         const meta = getCategoryMeta(evt.category);
@@ -1127,22 +1220,23 @@
                           <div
                             key={evt.id}
                             onClick={(e) => onEditEvent(evt, e)}
-                            className={`p-3 rounded-xl border ${meta.bg} ${meta.border} ${meta.text} flex items-start justify-between gap-3 shadow-sm dark:shadow-md`}
+                            className={`p-2.5 rounded-xl border ${meta.bg} ${meta.border} ${meta.text} shadow-sm flex items-start justify-between gap-2`}
                           >
-                            <div>
+                            <div className="space-y-1">
                               <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white flex items-center gap-2">
                                 <span className={`w-2 h-2 rounded-full ${meta.dot}`}></span>
                                 {evt.title}
                               </div>
-                              <div className="flex flex-wrap items-center gap-2 text-[11px] opacity-90 font-mono mt-1">
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] font-mono">
                                 <span>{evt.startTime} - {evt.endTime}</span>
-                                {evt.location && <span>• {evt.location}</span>}
+                                {evt.location && <span className="font-sans flex items-center gap-1"><IconMapPin />{evt.location}</span>}
                               </div>
+                              {evt.notes && <p className="text-[11px] opacity-80 italic line-clamp-1">{evt.notes}</p>}
                             </div>
 
                             <button
                               onClick={(e) => onDeleteEvent(evt.id, e)}
-                              className="p-1.5 rounded hover:bg-rose-500/20 text-rose-500 dark:text-rose-400 shrink-0"
+                              className="p-1 rounded text-rose-500 hover:bg-rose-500/10"
                             >
                               <IconTrash />
                             </button>
@@ -1156,22 +1250,21 @@
             </div>
           </div>
 
-          <div className="bg-white/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm dark:shadow-xl">
-            <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">Resumo do Dia</h3>
+          <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm dark:shadow-xl h-fit">
+            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-3">Resumo do Dia</h3>
             {dayEvents.length === 0 ? (
-              <p className="text-slate-500 text-xs">Nenhum evento agendado.</p>
+              <p className="text-xs text-slate-500 text-center py-6">Sem compromissos marcados.</p>
             ) : (
               <div className="space-y-2">
                 {dayEvents.map(evt => {
                   const meta = getCategoryMeta(evt.category);
                   return (
-                    <div key={evt.id} onClick={(e) => onEditEvent(evt, e)} className="p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl cursor-pointer">
-                      <div className="flex justify-between text-xs font-mono text-slate-500 dark:text-slate-400 mb-1">
-                        <span>{evt.startTime} - {evt.endTime}</span>
-                        <span className={`${meta.text}`}>{meta.label}</span>
+                    <div key={evt.id} onClick={(e) => onEditEvent(evt, e)} className="p-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl cursor-pointer">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${meta.bg} ${meta.text}`}>{meta.label}</span>
+                        <span className="text-[10px] font-mono text-slate-400">{evt.startTime}</span>
                       </div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">{evt.title}</div>
-                      {evt.location && <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{evt.location}</div>}
+                      <div className="font-semibold text-xs text-slate-900 dark:text-slate-100">{evt.title}</div>
                     </div>
                   );
                 })}
@@ -1182,112 +1275,32 @@
       );
     }
 
-    // --- MODAL GOOGLE SHEETS ---
+    // --- MODAL DE CONFIGURAÇÃO DO GOOGLE SHEETS ---
     function GoogleSheetsSyncModal({ isOpen, onClose, sheetUrl, setSheetUrl, onSync, isSyncing, syncStatus }) {
-      const [copied, setCopied] = useState(false);
-
-      const appsScriptCode = `function doGet(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheetEvents = ss.getSheetByName("Eventos") || ss.getSheets()[0];
-  var sheetCats = ss.getSheetByName("Categorias");
-  
-  var events = [];
-  if (sheetEvents) {
-    var data = sheetEvents.getDataRange().getValues();
-    for (var i = 1; i < data.length; i++) {
-      if (data[i][0]) {
-        events.push({
-          id: String(data[i][0]), title: String(data[i][1]), date: String(data[i][2]),
-          startTime: String(data[i][3]), endTime: String(data[i][4]), location: String(data[i][5]),
-          category: String(data[i][6]), notes: String(data[i][7])
-        });
-      }
-    }
-  }
-  
-  var categories = [];
-  if (sheetCats) {
-    var catData = sheetCats.getDataRange().getValues();
-    for (var j = 1; j < catData.length; j++) {
-      if (catData[j][0]) {
-        categories.push({ id: String(catData[j][0]), label: String(catData[j][1]), color: String(catData[j][2]) });
-      }
-    }
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", events: events, categories: categories }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doPost(e) {
-  try {
-    var contents = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    
-    var sheetEvents = ss.getSheetByName("Eventos");
-    if (!sheetEvents) {
-      sheetEvents = ss.getSheets()[0];
-      sheetEvents.setName("Eventos");
-    }
-    sheetEvents.clear();
-    sheetEvents.appendRow(["ID", "Título", "Data", "Hora Início", "Hora Término", "Local", "Categoria", "Notas"]);
-    if (contents.events) {
-      contents.events.forEach(function(evt) {
-        sheetEvents.appendRow([evt.id, evt.title, evt.date, evt.startTime, evt.endTime, evt.location, evt.category, evt.notes || ""]);
-      });
-    }
-
-    if (contents.categories && contents.categories.length > 0) {
-      var sheetCats = ss.getSheetByName("Categorias");
-      if (!sheetCats) {
-        sheetCats = ss.insertSheet("Categorias");
-      }
-      sheetCats.clear();
-      sheetCats.appendRow(["ID", "Nome", "Cor"]);
-      contents.categories.forEach(function(cat) {
-        sheetCats.appendRow([cat.id, cat.label, cat.color || 'indigo']);
-      });
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Planilha e categorias atualizadas!" }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}`;
-
-      const copyCode = () => {
-        navigator.clipboard.writeText(appsScriptCode);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      };
-
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 dark:bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
-              <h3 className="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                <IconSheets /> Sincronizar com Google Sheets
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <IconSheets /> Conectar ao Google Drive / Sheets
               </h3>
-              <button onClick={onClose} className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1"><IconX /></button>
+              <button onClick={onClose} className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white"><IconX /></button>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-300">
-              Cole o código no Google Apps Script da sua planilha e selecione Implantação como <strong>Web App</strong> (Acesso: <em>Qualquer pessoa</em>).
-            </p>
-
-            <div className="relative">
-              <button onClick={copyCode} className="absolute right-2 top-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline bg-white dark:bg-slate-900 px-2.5 py-1 rounded border border-slate-300 dark:border-slate-700">
-                {copied ? 'Copiado!' : 'Copiar Código'}
-              </button>
-              <pre className="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl text-[10px] font-mono text-slate-800 dark:text-slate-300 overflow-x-auto border border-slate-200 dark:border-slate-800 max-h-32">
-                {appsScriptCode}
-              </pre>
+            <div className="text-xs text-slate-600 dark:text-slate-300 space-y-2 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
+              <p className="font-semibold text-emerald-600 dark:text-emerald-400">Instruções para Sincronia Automática:</p>
+              <ol className="list-decimal list-inside space-y-1 text-[11px]">
+                <li>Abra uma planilha no Google Sheets.</li>
+                <li>Vá a <strong>Extensões &gt; Apps Script</strong> e cole o código do guia.</li>
+                <li>Clique em <strong>Implantar &gt; Nova Implantação &gt; App da Web</strong>.</li>
+                <li>Acesso: <strong>Qualquer pessoa</strong>. Copie a URL gerada e cole abaixo.</li>
+              </ol>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">URL do Web App do Google Script</label>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                URL do Google Apps Script
+              </label>
               <input
                 type="text"
                 placeholder="https://script.google.com/macros/s/.../exec"
@@ -1298,19 +1311,16 @@ function doPost(e) {
             </div>
 
             {syncStatus.message && (
-              <div className={`p-3 rounded-xl text-xs border ${
-                syncStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' :
-                syncStatus.type === 'error' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' :
-                'bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-500/30'
-              }`}>
+              <div className={`p-2.5 rounded-xl text-xs ${syncStatus.type === 'error' ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
                 {syncStatus.message}
               </div>
             )}
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-              <button onClick={onClose} className="px-4 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Fechar</button>
-              <button onClick={onSync} disabled={isSyncing} className="px-5 py-2 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-md">
-                {isSyncing ? 'Sincronizando...' : 'Sincronizar Agora'}
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={onClose} className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Fechar</button>
+              <button onClick={onSync} disabled={isSyncing} className="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 flex items-center gap-1">
+                <IconRefresh />
+                {isSyncing ? 'A Sincronizar...' : 'Sincronizar Agora'}
               </button>
             </div>
           </div>
@@ -1318,8 +1328,10 @@ function doPost(e) {
       );
     }
 
-    // Renderizar App
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    // RENDERIZAR NA DOM
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
   </script>
 </body>
 </html>
