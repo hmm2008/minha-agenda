@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Agenda Pessoal Pro</title>
+  <title>Agenda Pessoal Francisco</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -374,12 +374,20 @@
         await syncWithSheets(events, categories);
       };
 
+      // FORMATADOR DA BARRA DE NAVEGAÇÃO DE DATAS
       const headerDateLabel = useMemo(() => {
         const locale = 'pt-PT';
         if (viewMode === 'month') {
-          return currentDate.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+          const monthStr = currentDate.toLocaleDateString(locale, { month: 'long' });
+          const capitalizedMonth = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
+          return `${capitalizedMonth} ${currentDate.getFullYear()}`;
         } else if (viewMode === 'day') {
-          return currentDate.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
+          const weekdayRaw = currentDate.toLocaleDateString(locale, { weekday: 'long' });
+          const weekday = weekdayRaw.split('-')[0];
+          const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+          const monthStr = currentDate.toLocaleDateString(locale, { month: 'long' });
+          const capitalizedMonth = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
+          return `${capitalizedWeekday}, ${currentDate.getDate()} ${capitalizedMonth} ${currentDate.getFullYear()}`;
         } else {
           const dayOfWeek = (currentDate.getDay() + 6) % 7;
           const startOfWeek = new Date(currentDate);
@@ -387,10 +395,18 @@
           const endOfWeek = new Date(startOfWeek);
           endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-          const startMonth = startOfWeek.toLocaleDateString(locale, { month: 'short' });
-          const endMonth = endOfWeek.toLocaleDateString(locale, { month: 'short', year: 'numeric' });
+          const formatShortMonth = (d) => {
+            let m = d.toLocaleDateString(locale, { month: 'short' }).replace('.', '');
+            return m.charAt(0).toUpperCase() + m.slice(1) + '.';
+          };
 
-          return `${startOfWeek.getDate()} ${startMonth} - ${endOfWeek.getDate()} ${endMonth}`;
+          const startDay = startOfWeek.getDate();
+          const startMonth = formatShortMonth(startOfWeek);
+          const endDay = endOfWeek.getDate();
+          const endMonth = formatShortMonth(endOfWeek);
+          const endYear = endOfWeek.getFullYear();
+
+          return `${startDay} ${startMonth} - ${endDay} ${endMonth} ${endYear}`;
         }
       }, [currentDate, viewMode]);
 
@@ -404,7 +420,7 @@
               </div>
               <div>
                 <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent leading-tight">
-                  Agenda Pro
+                  Agenda Pessoal Francisco
                 </h1>
                 <p className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
