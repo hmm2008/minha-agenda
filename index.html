@@ -26,7 +26,6 @@
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
-    /* Estilização da barra de rolagem */
     .custom-scrollbar::-webkit-scrollbar {
       width: 4px;
       height: 4px;
@@ -41,7 +40,6 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: rgba(99, 102, 241, 0.8);
     }
-    /* Prevenir seleção indesejada ao deslizar */
     .touch-swipe-zone {
       user-select: none;
       -webkit-user-select: none;
@@ -55,7 +53,7 @@
   <script type="text/babel">
     const { useState, useEffect, useMemo, useRef } = React;
 
-    // --- ÍCONES SVG EMBUTIDOS ---
+    // --- ÍCONES SVG ---
     const IconCalendar = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
     const IconChevronLeft = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>;
     const IconChevronRight = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>;
@@ -64,26 +62,37 @@
     const IconClock = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
     const IconTrash = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>;
     const IconEdit = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>;
-    const IconX = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>;
-    const IconSheets = () => <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>;
+    const IconGrid = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>;
+    const IconDays = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
     const IconSearch = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>;
-    const IconFilter = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.447.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"></path></svg>;
+    const IconFilter = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>;
+    const IconSheets = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>;
     const IconCheck = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>;
-    const IconGrid = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>;
-    const IconDays = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
-    const IconSwipeHand = () => <svg className="w-4 h-4 animate-pulse text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>;
+    const IconX = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>;
+    const IconSwipeHand = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 11.5V14m0 0v-2.5m0 2.5l-3-3m8 8h5a2 2 0 002-2V9a2 2 0 00-2-2h-3m-4 4V4a2 2 0 00-4 0v7.5"></path></svg>;
 
-    // --- CONFIGURAÇÃO DE CATEGORIAS ---
-    const CATEGORIES = [
-      { id: 'work', label: 'Trabalho', bg: 'bg-indigo-500/15', text: 'text-indigo-400', border: 'border-indigo-500/30', dot: 'bg-indigo-500' },
-      { id: 'personal', label: 'Pessoal', bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30', dot: 'bg-emerald-500' },
-      { id: 'health', label: 'Saúde', bg: 'bg-rose-500/15', text: 'text-rose-400', border: 'border-rose-500/30', dot: 'bg-rose-500' },
-      { id: 'study', label: 'Estudo', bg: 'bg-violet-500/15', text: 'text-violet-400', border: 'border-violet-500/30', dot: 'bg-violet-500' },
-      { id: 'finance', label: 'Finanças', bg: 'bg-amber-500/15', text: 'text-amber-400', border: 'border-amber-500/30', dot: 'bg-amber-500' },
-      { id: 'social', label: 'Lazer & Social', bg: 'bg-cyan-500/15', text: 'text-cyan-400', border: 'border-cyan-500/30', dot: 'bg-cyan-500' },
+    // --- CONFIGURAÇÃO DE CATEGORIAS E CORES ---
+    const COLOR_OPTIONS = [
+      { id: 'indigo', label: 'Índigo', bg: 'bg-indigo-500/15', text: 'text-indigo-400', border: 'border-indigo-500/30', dot: 'bg-indigo-500' },
+      { id: 'emerald', label: 'Esmeralda', bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30', dot: 'bg-emerald-500' },
+      { id: 'rose', label: 'Rosa / Vermelho', bg: 'bg-rose-500/15', text: 'text-rose-400', border: 'border-rose-500/30', dot: 'bg-rose-500' },
+      { id: 'violet', label: 'Violeta / Roxo', bg: 'bg-violet-500/15', text: 'text-violet-400', border: 'border-violet-500/30', dot: 'bg-violet-500' },
+      { id: 'amber', label: 'Âmbar / Amarelo', bg: 'bg-amber-500/15', text: 'text-amber-400', border: 'border-amber-500/30', dot: 'bg-amber-500' },
+      { id: 'cyan', label: 'Ciano', bg: 'bg-cyan-500/15', text: 'text-cyan-400', border: 'border-cyan-500/30', dot: 'bg-cyan-500' },
+      { id: 'pink', label: 'Pink', bg: 'bg-pink-500/15', text: 'text-pink-400', border: 'border-pink-500/30', dot: 'bg-pink-500' },
+      { id: 'orange', label: 'Laranja', bg: 'bg-orange-500/15', text: 'text-orange-400', border: 'border-orange-500/30', dot: 'bg-orange-500' },
+      { id: 'teal', label: 'Verde-Água', bg: 'bg-teal-500/15', text: 'text-teal-400', border: 'border-teal-500/30', dot: 'bg-teal-500' },
+      { id: 'sky', label: 'Céu (Azul)', bg: 'bg-sky-500/15', text: 'text-sky-400', border: 'border-sky-500/30', dot: 'bg-sky-500' },
     ];
 
-    const DEFAULT_CATEGORY = CATEGORIES[0];
+    const DEFAULT_CATEGORIES = [
+      { id: 'work', label: 'Trabalho', color: 'indigo' },
+      { id: 'personal', label: 'Pessoal', color: 'emerald' },
+      { id: 'health', label: 'Saúde', color: 'rose' },
+      { id: 'study', label: 'Estudo', color: 'violet' },
+      { id: 'finance', label: 'Finanças', color: 'amber' },
+      { id: 'social', label: 'Lazer & Social', color: 'cyan' },
+    ];
 
     const formatDateKey = (date) => {
       const d = new Date(date);
@@ -92,8 +101,6 @@
       const day = String(d.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     };
-
-    const getCategoryMeta = (catId) => CATEGORIES.find(c => c.id === catId) || DEFAULT_CATEGORY;
 
     const INITIAL_EVENTS = [
       {
@@ -135,8 +142,13 @@
         return saved ? JSON.parse(saved) : INITIAL_EVENTS;
       });
 
+      const [categories, setCategories] = useState(() => {
+        const saved = localStorage.getItem('agenda_categories_v3');
+        return saved ? JSON.parse(saved) : DEFAULT_CATEGORIES;
+      });
+
       const [currentDate, setCurrentDate] = useState(new Date());
-      const [viewMode, setViewMode] = useState('month'); // 'month' | 'week' | 'day'
+      const [viewMode, setViewMode] = useState('month');
       const [searchQuery, setSearchQuery] = useState('');
       const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('all');
 
@@ -144,19 +156,14 @@
       const [isEventModalOpen, setIsEventModalOpen] = useState(false);
       const [editingEvent, setEditingEvent] = useState(null);
       const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+      const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
       // Google Sheets
       const [sheetUrl, setSheetUrl] = useState(() => localStorage.getItem('agenda_sheet_url') || '');
       const [isSyncing, setIsSyncing] = useState(false);
       const [syncStatus, setSyncStatus] = useState({ type: null, message: '' });
 
-      // Touch & Swipe State
-      const touchStartX = useRef(null);
-      const touchStartY = useRef(null);
-      const touchEndX = useRef(null);
-      const touchEndY = useRef(null);
-
-      // Formulário
+      // Formulário do Evento
       const [formData, setFormData] = useState({
         title: '',
         date: formatDateKey(new Date()),
@@ -167,9 +174,30 @@
         notes: ''
       });
 
+      // Controlo de gestos Swipe
+      const touchStartX = useRef(null);
+      const touchStartY = useRef(null);
+      const touchEndX = useRef(null);
+      const touchEndY = useRef(null);
+
+      const getCategoryMeta = (catId) => {
+        const found = categories.find(c => c.id === catId);
+        const colorId = found ? found.color : 'indigo';
+        const colorMeta = COLOR_OPTIONS.find(c => c.id === colorId) || COLOR_OPTIONS[0];
+        return {
+          id: catId,
+          label: found ? found.label : catId,
+          ...colorMeta
+        };
+      };
+
       useEffect(() => {
         localStorage.setItem('agenda_events_v3', JSON.stringify(events));
       }, [events]);
+
+      useEffect(() => {
+        localStorage.setItem('agenda_categories_v3', JSON.stringify(categories));
+      }, [categories]);
 
       useEffect(() => {
         localStorage.setItem('agenda_sheet_url', sheetUrl);
@@ -205,12 +233,10 @@
         setCurrentDate(newDate);
       };
 
-      // HANDLERS PARA GESTOS SWIPE (DESLIZAMENTO TÁTIL)
+      // Gestos Swipe
       const handleTouchStart = (e) => {
         touchStartX.current = e.targetTouches[0].clientX;
         touchStartY.current = e.targetTouches[0].clientY;
-        touchEndX.current = null;
-        touchEndY.current = null;
       };
 
       const handleTouchMove = (e) => {
@@ -224,18 +250,14 @@
         const distanceX = touchStartX.current - touchEndX.current;
         const distanceY = Math.abs((touchStartY.current || 0) - (touchEndY.current || 0));
 
-        // Mínimo 50px de deslocamento e garantir que é um gesto predominantemente horizontal
         if (Math.abs(distanceX) > distanceY && Math.abs(distanceX) > 50) {
           if (distanceX > 0) {
-            // Deslizou para a esquerda -> Próximo período
             handleNext();
           } else {
-            // Deslizou para a direita -> Período anterior
             handlePrev();
           }
         }
 
-        // Reset
         touchStartX.current = null;
         touchStartY.current = null;
         touchEndX.current = null;
@@ -253,7 +275,7 @@
           startTime: timeStr,
           endTime: endStr,
           location: '',
-          category: 'work',
+          category: categories[0]?.id || 'work',
           notes: ''
         });
         setIsEventModalOpen(true);
@@ -266,26 +288,29 @@
         setIsEventModalOpen(true);
       };
 
-      const syncWithSheets = async (targetEvents = events) => {
+      const syncWithSheets = async (targetEvents = events, targetCategories = categories) => {
         if (!sheetUrl.trim()) return;
 
         setIsSyncing(true);
-        setSyncStatus({ type: 'info', message: 'Sincronizando com o Google Sheets...' });
+        setSyncStatus({ type: 'info', message: 'Sincronizando compromissos e categorias...' });
 
         try {
           const response = await fetch(sheetUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ events: targetEvents }),
+            body: JSON.stringify({ events: targetEvents, categories: targetCategories }),
           });
 
           const resData = await response.json();
 
           if (resData.status === 'success') {
-            if (resData.events && Array.isArray(resData.events) && targetEvents === events) {
+            if (resData.events && Array.isArray(resData.events) && resData.events.length > 0) {
               setEvents(resData.events);
             }
-            setSyncStatus({ type: 'success', message: 'Sincronizado automaticamente!' });
+            if (resData.categories && Array.isArray(resData.categories) && resData.categories.length > 0) {
+              setCategories(resData.categories);
+            }
+            setSyncStatus({ type: 'success', message: 'Sincronizado com sucesso!' });
           } else {
             throw new Error(resData.message || 'Erro ao comunicar com o Google Sheets.');
           }
@@ -315,7 +340,18 @@
         setIsEventModalOpen(false);
 
         if (sheetUrl.trim()) {
-          syncWithSheets(updatedEvents);
+          syncWithSheets(updatedEvents, categories);
+        }
+      };
+
+      const handleAddCategory = (newCat) => {
+        const updatedCats = [...categories, newCat];
+        setCategories(updatedCats);
+        setFormData(prev => ({ ...prev, category: newCat.id }));
+        setIsCategoryModalOpen(false);
+
+        if (sheetUrl.trim()) {
+          syncWithSheets(events, updatedCats);
         }
       };
 
@@ -326,7 +362,7 @@
         setIsEventModalOpen(false);
 
         if (sheetUrl.trim()) {
-          syncWithSheets(updatedEvents);
+          syncWithSheets(updatedEvents, categories);
         }
       };
 
@@ -335,7 +371,7 @@
           setSyncStatus({ type: 'error', message: 'Insira a URL do Apps Script do Google.' });
           return;
         }
-        await syncWithSheets(events);
+        await syncWithSheets(events, categories);
       };
 
       const headerDateLabel = useMemo(() => {
@@ -495,7 +531,7 @@
                   className="bg-transparent text-xs text-slate-200 focus:outline-none cursor-pointer max-w-[100px] sm:max-w-none truncate"
                 >
                   <option value="all" className="bg-slate-900">Todas</option>
-                  {CATEGORIES.map(cat => (
+                  {categories.map(cat => (
                     <option key={cat.id} value={cat.id} className="bg-slate-900">
                       {cat.label}
                     </option>
@@ -505,7 +541,7 @@
             </div>
           </div>
 
-          {/* ÁREA PRINCIPAL COM SUPORTE A TOUCH SWIPE */}
+          {/* ÁREA PRINCIPAL COM TOUCH SWIPE */}
           <main 
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -516,6 +552,7 @@
               <MonthView 
                 currentDate={currentDate} 
                 events={filteredEvents}
+                getCategoryMeta={getCategoryMeta}
                 onSelectDate={(d) => {
                   setCurrentDate(d);
                   setViewMode('day');
@@ -529,6 +566,7 @@
               <WeekView 
                 currentDate={currentDate} 
                 events={filteredEvents}
+                getCategoryMeta={getCategoryMeta}
                 onAddEvent={(dateStr, timeStr) => openNewEventModal(dateStr, timeStr)}
                 onEditEvent={openEditEventModal}
               />
@@ -538,6 +576,7 @@
               <DayView 
                 currentDate={currentDate} 
                 events={filteredEvents}
+                getCategoryMeta={getCategoryMeta}
                 onAddEvent={(dateStr, timeStr) => openNewEventModal(dateStr, timeStr)}
                 onEditEvent={openEditEventModal}
                 onDeleteEvent={handleDeleteEvent}
@@ -545,7 +584,7 @@
             )}
           </main>
 
-          {/* BOTÃO FLUTUANTE DE AÇÃO RÁPIDA (FAB) PARA MOBILE */}
+          {/* BOTÃO FLUTUANTE (FAB) PARA MOBILE */}
           <button
             onClick={() => openNewEventModal()}
             className="sm:hidden fixed bottom-5 right-5 z-40 p-4 bg-gradient-to-tr from-indigo-500 to-violet-600 text-white rounded-full shadow-2xl shadow-indigo-500/50 active:scale-90 transition-transform flex items-center justify-center ring-4 ring-slate-950"
@@ -554,7 +593,7 @@
             <IconPlus />
           </button>
 
-          {/* MODAL: AGENDAR / EDITAR */}
+          {/* MODAL: AGENDAR / EDITAR EVENTO */}
           {isEventModalOpen && (
             <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-sm">
               <div className="bg-slate-900 border border-slate-800 rounded-t-2xl sm:rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
@@ -599,13 +638,22 @@
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Categoria</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs font-semibold text-slate-300 uppercase">Categoria</label>
+                        <button
+                          type="button"
+                          onClick={() => setIsCategoryModalOpen(true)}
+                          className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 underline"
+                        >
+                          + Criar Nova
+                        </button>
+                      </div>
                       <select
                         value={formData.category}
                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                         className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
                       >
-                        {CATEGORIES.map(cat => (
+                        {categories.map(cat => (
                           <option key={cat.id} value={cat.id} className="bg-slate-900">{cat.label}</option>
                         ))}
                       </select>
@@ -709,12 +757,95 @@
               syncStatus={syncStatus}
             />
           )}
+
+          {/* MODAL: CRIAR NOVA CATEGORIA */}
+          {isCategoryModalOpen && (
+            <CategoryCreateModal
+              isOpen={isCategoryModalOpen}
+              onClose={() => setIsCategoryModalOpen(false)}
+              onAddCategory={handleAddCategory}
+            />
+          )}
+        </div>
+      );
+    }
+
+    // --- MODAL PARA CRIAR CATEGORIAS ---
+    function CategoryCreateModal({ isOpen, onClose, onAddCategory }) {
+      const [name, setName] = useState('');
+      const [selectedColor, setSelectedColor] = useState('indigo');
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!name.trim()) return;
+
+        const newCat = {
+          id: 'cat_' + Date.now(),
+          label: name.trim(),
+          color: selectedColor
+        };
+        onAddCategory(newCat);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-indigo-500"></span>
+                Criar Nova Categoria
+              </h3>
+              <button onClick={onClose} className="text-slate-400 hover:text-white p-1"><IconX /></button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Nome da Categoria *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ex: Viagens, Projetos, Treino..."
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase mb-2">Escolher Cor</label>
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar p-1">
+                  {COLOR_OPTIONS.map((col) => (
+                    <button
+                      key={col.id}
+                      type="button"
+                      onClick={() => setSelectedColor(col.id)}
+                      className={`p-2 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all ${col.bg} ${col.text} ${col.border} ${
+                        selectedColor === col.id ? 'ring-2 ring-indigo-400 font-bold shadow-md' : 'opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <span className={`w-3 h-3 rounded-full ${col.dot} shrink-0`}></span>
+                      <span className="truncate">{col.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+                <button type="button" onClick={onClose} className="px-4 py-2 text-xs rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800">
+                  Cancelar
+                </button>
+                <button type="submit" className="px-5 py-2 text-xs rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-md shadow-indigo-500/20">
+                  Adicionar Categoria
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       );
     }
 
     // --- VISTA MÊS ---
-    function MonthView({ currentDate, events, onSelectDate, onAddEventOnDate, onEditEvent }) {
+    function MonthView({ currentDate, events, getCategoryMeta, onSelectDate, onAddEventOnDate, onEditEvent }) {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
 
@@ -724,6 +855,7 @@
 
         let startingDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7;
         const totalDays = lastDayOfMonth.getDate();
+
         const days = [];
 
         const prevMonthLastDay = new Date(year, month, 0).getDate();
@@ -753,11 +885,13 @@
         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md flex flex-col">
           <div className="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80 text-center text-[11px] sm:text-xs font-semibold text-slate-400 py-2.5">
             {weekDayLabels.map((day, idx) => (
-              <div key={idx} className={idx >= 5 ? 'text-indigo-400/80' : ''}>{day}</div>
+              <div key={idx} className={idx >= 5 ? 'text-indigo-400/80' : ''}>
+                {day}
+              </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 auto-rows-fr gap-[1px] bg-slate-800/50 min-h-[480px] sm:min-h-[600px]">
+          <div className="grid grid-cols-7 auto-rows-fr gap-[1px] bg-slate-800/50 min-h-[500px] sm:min-h-[600px]">
             {calendarDays.map((dayObj, index) => {
               const dayEvents = events.filter(e => e.date === dayObj.dateKey);
               const isToday = dayObj.dateKey === todayKey;
@@ -766,14 +900,18 @@
                 <div
                   key={index}
                   onClick={() => onSelectDate(dayObj.date)}
-                  className={`min-h-[70px] sm:min-h-[110px] p-1 sm:p-2 bg-slate-900/90 transition-all group hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
-                    !dayObj.isCurrentMonth ? 'opacity-30 bg-slate-950/40' : ''
+                  className={`min-h-[85px] sm:min-h-[110px] p-1.5 sm:p-2 bg-slate-900/90 transition-all group hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
+                    !dayObj.isCurrentMonth ? 'opacity-40 bg-slate-950/40' : ''
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className={`text-[11px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${
-                      isToday ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-400' : 'text-slate-300'
-                    }`}>
+                    <span
+                      className={`text-[10px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all ${
+                        isToday
+                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 ring-1 sm:ring-2 ring-indigo-400'
+                          : 'text-slate-300 group-hover:text-white'
+                      }`}
+                    >
                       {dayObj.date.getDate()}
                     </span>
 
@@ -782,7 +920,8 @@
                         e.stopPropagation();
                         onAddEventOnDate(dayObj.dateKey);
                       }}
-                      className="hidden sm:block opacity-0 group-hover:opacity-100 p-1 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white"
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white transition-all hidden sm:block"
+                      title="Novo Evento"
                     >
                       <IconPlus />
                     </button>
@@ -812,7 +951,7 @@
     }
 
     // --- VISTA SEMANA ---
-    function WeekView({ currentDate, events, onAddEvent, onEditEvent }) {
+    function WeekView({ currentDate, events, getCategoryMeta, onAddEvent, onEditEvent }) {
       const hours = Array.from({ length: 15 }, (_, i) => i + 8);
 
       const weekDays = useMemo(() => {
@@ -897,7 +1036,7 @@
     }
 
     // --- VISTA DIA ---
-    function DayView({ currentDate, events, onAddEvent, onEditEvent, onDeleteEvent }) {
+    function DayView({ currentDate, events, getCategoryMeta, onAddEvent, onEditEvent, onDeleteEvent }) {
       const dateKey = formatDateKey(currentDate);
       const dayEvents = events.filter(e => e.date === dateKey);
       const hours = Array.from({ length: 16 }, (_, i) => i + 7);
@@ -996,34 +1135,69 @@
       const [copied, setCopied] = useState(false);
 
       const appsScriptCode = `function doGet(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = sheet.getDataRange().getValues();
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetEvents = ss.getSheetByName("Eventos") || ss.getSheets()[0];
+  var sheetCats = ss.getSheetByName("Categorias");
+  
   var events = [];
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][0]) {
-      events.push({
-        id: String(data[i][0]), title: String(data[i][1]), date: String(data[i][2]),
-        startTime: String(data[i][3]), endTime: String(data[i][4]), location: String(data[i][5]),
-        category: String(data[i][6]), notes: String(data[i][7])
-      });
+  if (sheetEvents) {
+    var data = sheetEvents.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][0]) {
+        events.push({
+          id: String(data[i][0]), title: String(data[i][1]), date: String(data[i][2]),
+          startTime: String(data[i][3]), endTime: String(data[i][4]), location: String(data[i][5]),
+          category: String(data[i][6]), notes: String(data[i][7])
+        });
+      }
     }
   }
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", events: events }))
+  
+  var categories = [];
+  if (sheetCats) {
+    var catData = sheetCats.getDataRange().getValues();
+    for (var j = 1; j < catData.length; j++) {
+      if (catData[j][0]) {
+        categories.push({ id: String(catData[j][0]), label: String(catData[j][1]), color: String(catData[j][2]) });
+      }
+    }
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({ status: "success", events: events, categories: categories }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
   try {
     var contents = JSON.parse(e.postData.contents);
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    sheet.clear();
-    sheet.appendRow(["ID", "Título", "Data", "Hora Início", "Hora Término", "Local", "Categoria", "Notas"]);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    var sheetEvents = ss.getSheetByName("Eventos");
+    if (!sheetEvents) {
+      sheetEvents = ss.getSheets()[0];
+      sheetEvents.setName("Eventos");
+    }
+    sheetEvents.clear();
+    sheetEvents.appendRow(["ID", "Título", "Data", "Hora Início", "Hora Término", "Local", "Categoria", "Notas"]);
     if (contents.events) {
       contents.events.forEach(function(evt) {
-        sheet.appendRow([evt.id, evt.title, evt.date, evt.startTime, evt.endTime, evt.location, evt.category, evt.notes || ""]);
+        sheetEvents.appendRow([evt.id, evt.title, evt.date, evt.startTime, evt.endTime, evt.location, evt.category, evt.notes || ""]);
       });
     }
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Planilha sincronizada!" }))
+
+    if (contents.categories && contents.categories.length > 0) {
+      var sheetCats = ss.getSheetByName("Categorias");
+      if (!sheetCats) {
+        sheetCats = ss.insertSheet("Categorias");
+      }
+      sheetCats.clear();
+      sheetCats.appendRow(["ID", "Nome", "Cor"]);
+      contents.categories.forEach(function(cat) {
+        sheetCats.appendRow([cat.id, cat.label, cat.color || 'indigo']);
+      });
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Planilha e categorias atualizadas!" }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
