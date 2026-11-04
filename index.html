@@ -7,6 +7,11 @@
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
   
   <!-- React 18 e ReactDOM CDN -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -70,19 +75,21 @@
     const IconCheck = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>;
     const IconX = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>;
     const IconSwipeHand = () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 11.5V14m0 0v-2.5m0 2.5l-3-3m8 8h5a2 2 0 002-2V9a2 2 0 00-2-2h-3m-4 4V4a2 2 0 00-4 0v7.5"></path></svg>;
+    const IconSun = () => <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>;
+    const IconMoon = () => <svg className="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>;
 
     // --- CONFIGURAÇÃO DE CATEGORIAS E CORES ---
     const COLOR_OPTIONS = [
-      { id: 'indigo', label: 'Índigo', bg: 'bg-indigo-500/15', text: 'text-indigo-400', border: 'border-indigo-500/30', dot: 'bg-indigo-500' },
-      { id: 'emerald', label: 'Esmeralda', bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30', dot: 'bg-emerald-500' },
-      { id: 'rose', label: 'Rosa / Vermelho', bg: 'bg-rose-500/15', text: 'text-rose-400', border: 'border-rose-500/30', dot: 'bg-rose-500' },
-      { id: 'violet', label: 'Violeta / Roxo', bg: 'bg-violet-500/15', text: 'text-violet-400', border: 'border-violet-500/30', dot: 'bg-violet-500' },
-      { id: 'amber', label: 'Âmbar / Amarelo', bg: 'bg-amber-500/15', text: 'text-amber-400', border: 'border-amber-500/30', dot: 'bg-amber-500' },
-      { id: 'cyan', label: 'Ciano', bg: 'bg-cyan-500/15', text: 'text-cyan-400', border: 'border-cyan-500/30', dot: 'bg-cyan-500' },
-      { id: 'pink', label: 'Pink', bg: 'bg-pink-500/15', text: 'text-pink-400', border: 'border-pink-500/30', dot: 'bg-pink-500' },
-      { id: 'orange', label: 'Laranja', bg: 'bg-orange-500/15', text: 'text-orange-400', border: 'border-orange-500/30', dot: 'bg-orange-500' },
-      { id: 'teal', label: 'Verde-Água', bg: 'bg-teal-500/15', text: 'text-teal-400', border: 'border-teal-500/30', dot: 'bg-teal-500' },
-      { id: 'sky', label: 'Céu (Azul)', bg: 'bg-sky-500/15', text: 'text-sky-400', border: 'border-sky-500/30', dot: 'bg-sky-500' },
+      { id: 'indigo', label: 'Índigo', bg: 'bg-indigo-500/15', text: 'text-indigo-600 dark:text-indigo-400', border: 'border-indigo-500/30', dot: 'bg-indigo-500' },
+      { id: 'emerald', label: 'Esmeralda', bg: 'bg-emerald-500/15', text: 'text-emerald-600 dark:text-emerald-400', border: 'border-emerald-500/30', dot: 'bg-emerald-500' },
+      { id: 'rose', label: 'Rosa / Vermelho', bg: 'bg-rose-500/15', text: 'text-rose-600 dark:text-rose-400', border: 'border-rose-500/30', dot: 'bg-rose-500' },
+      { id: 'violet', label: 'Violeta / Roxo', bg: 'bg-violet-500/15', text: 'text-violet-600 dark:text-violet-400', border: 'border-violet-500/30', dot: 'bg-violet-500' },
+      { id: 'amber', label: 'Âmbar / Amarelo', bg: 'bg-amber-500/15', text: 'text-amber-600 dark:text-amber-400', border: 'border-amber-500/30', dot: 'bg-amber-500' },
+      { id: 'cyan', label: 'Ciano', bg: 'bg-cyan-500/15', text: 'text-cyan-600 dark:text-cyan-400', border: 'border-cyan-500/30', dot: 'bg-cyan-500' },
+      { id: 'pink', label: 'Pink', bg: 'bg-pink-500/15', text: 'text-pink-600 dark:text-pink-400', border: 'border-pink-500/30', dot: 'bg-pink-500' },
+      { id: 'orange', label: 'Laranja', bg: 'bg-orange-500/15', text: 'text-orange-600 dark:text-orange-400', border: 'border-orange-500/30', dot: 'bg-orange-500' },
+      { id: 'teal', label: 'Verde-Água', bg: 'bg-teal-500/15', text: 'text-teal-600 dark:text-teal-400', border: 'border-teal-500/30', dot: 'bg-teal-500' },
+      { id: 'sky', label: 'Céu (Azul)', bg: 'bg-sky-500/15', text: 'text-sky-600 dark:text-sky-400', border: 'border-sky-500/30', dot: 'bg-sky-500' },
     ];
 
     const DEFAULT_CATEGORIES = [
@@ -147,6 +154,10 @@
         return saved ? JSON.parse(saved) : DEFAULT_CATEGORIES;
       });
 
+      const [theme, setTheme] = useState(() => {
+        return localStorage.getItem('agenda_theme') || 'dark';
+      });
+
       const [currentDate, setCurrentDate] = useState(new Date());
       const [viewMode, setViewMode] = useState('month');
       const [searchQuery, setSearchQuery] = useState('');
@@ -162,6 +173,20 @@
       const [sheetUrl, setSheetUrl] = useState(() => localStorage.getItem('agenda_sheet_url') || '');
       const [isSyncing, setIsSyncing] = useState(false);
       const [syncStatus, setSyncStatus] = useState({ type: null, message: '' });
+
+      // Gestão do Tema (Modo Claro / Escuro)
+      useEffect(() => {
+        localStorage.setItem('agenda_theme', theme);
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }, [theme]);
+
+      const toggleTheme = () => {
+        setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+      };
 
       // Formulário do Evento
       const [formData, setFormData] = useState({
@@ -411,18 +436,18 @@
       }, [currentDate, viewMode]);
 
       return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200">
           {/* CABEÇALHO SUPERIOR */}
-          <header className="sticky top-0 z-30 backdrop-blur-xl bg-slate-900/90 border-b border-slate-800/80 px-3 sm:px-8 py-3 flex items-center justify-between gap-2 shadow-xl">
+          <header className="sticky top-0 z-30 backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800/80 px-3 sm:px-8 py-3 flex items-center justify-between gap-2 shadow-sm dark:shadow-xl">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-2 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-xl shadow-lg shadow-indigo-500/20 text-white shrink-0">
                 <IconCalendar />
               </div>
               <div>
-                <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent leading-tight">
+                <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-500 dark:from-white dark:via-slate-200 dark:to-slate-400 bg-clip-text text-transparent leading-tight">
                   Agenda Pessoal Francisco
                 </h1>
-                <p className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-1">
+                <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   Mobile & Sheets
                 </p>
@@ -430,13 +455,13 @@
             </div>
 
             {/* Alternador de Vistas */}
-            <div className="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
+            <div className="flex items-center bg-slate-200/80 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-300/60 dark:border-slate-700/60">
               <button
                 onClick={() => setViewMode('month')}
                 className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
                   viewMode === 'month' 
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <IconGrid />
@@ -447,7 +472,7 @@
                 className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
                   viewMode === 'week' 
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <IconDays />
@@ -458,7 +483,7 @@
                 className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1 ${
                   viewMode === 'day' 
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20' 
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <IconClock />
@@ -466,11 +491,22 @@
               </button>
             </div>
 
-            {/* Ações Rápidas */}
-            <div className="flex items-center gap-2">
+            {/* Ações Rápidas & Alternador de Tema */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {/* Botão de Modo Claro / Escuro */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700/60 bg-slate-200/70 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-all flex items-center gap-1.5 shadow-sm"
+                title={theme === 'dark' ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
+                aria-label="Alternar Tema"
+              >
+                {theme === 'dark' ? <IconSun /> : <IconMoon />}
+                <span className="hidden md:inline">{theme === 'dark' ? 'Claro' : 'Escuro'}</span>
+              </button>
+
               <button
                 onClick={() => setIsSyncModalOpen(true)}
-                className="p-2 sm:px-3.5 sm:py-2 text-xs font-medium rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-all flex items-center gap-1.5"
+                className="p-2 sm:px-3.5 sm:py-2 text-xs font-medium rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all flex items-center gap-1.5"
                 title="Google Sheets"
               >
                 <IconSheets />
@@ -488,11 +524,11 @@
           </header>
 
           {/* BARRA NAVEGAÇÃO E PESQUISA */}
-          <div className="bg-slate-900/50 border-b border-slate-800/60 px-3 sm:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3">
+          <div className="bg-slate-200/50 dark:bg-slate-900/50 border-b border-slate-300/60 dark:border-slate-800/60 px-3 sm:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={handleToday}
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 active:bg-slate-600"
+                className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 transition-all shadow-sm"
               >
                 Hoje
               </button>
@@ -500,27 +536,27 @@
               <div className="flex items-center gap-1">
                 <button
                   onClick={handlePrev}
-                  className="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 active:bg-slate-600"
+                  className="p-2 rounded-lg bg-white/80 dark:bg-slate-800/60 border border-slate-300/60 dark:border-transparent hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all"
                   aria-label="Anterior"
                 >
                   <IconChevronLeft />
                 </button>
                 <button
                   onClick={handleNext}
-                  className="p-2 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 active:bg-slate-600"
+                  className="p-2 rounded-lg bg-white/80 dark:bg-slate-800/60 border border-slate-300/60 dark:border-transparent hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all"
                   aria-label="Próximo"
                 >
                   <IconChevronRight />
                 </button>
               </div>
 
-              <h2 className="text-sm sm:text-lg font-bold text-slate-100 capitalize truncate">
+              <h2 className="text-sm sm:text-lg font-bold text-slate-800 dark:text-slate-100 capitalize truncate">
                 {headerDateLabel}
               </h2>
             </div>
 
             {/* Dica de Deslizamento para Mobile */}
-            <div className="flex sm:hidden items-center gap-1 text-[11px] text-slate-400 bg-slate-800/40 px-2.5 py-1 rounded-full border border-slate-700/50">
+            <div className="flex sm:hidden items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-800/40 px-2.5 py-1 rounded-full border border-slate-300/60 dark:border-slate-700/50">
               <IconSwipeHand />
               <span>Deslize p/ lado</span>
             </div>
@@ -535,20 +571,20 @@
                   placeholder="Pesquisar..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/80 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 shadow-sm"
                 />
               </div>
 
-              <div className="flex items-center gap-1 bg-slate-800/60 border border-slate-700/80 rounded-xl px-2 py-1.5">
+              <div className="flex items-center gap-1 bg-white dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700/80 rounded-xl px-2 py-1.5 shadow-sm">
                 <IconFilter />
                 <select
                   value={selectedCategoryFilter}
                   onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                  className="bg-transparent text-xs text-slate-200 focus:outline-none cursor-pointer max-w-[100px] sm:max-w-none truncate"
+                  className="bg-transparent text-xs text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[100px] sm:max-w-none truncate"
                 >
-                  <option value="all" className="bg-slate-900">Todas</option>
+                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Todas</option>
                   {categories.map(cat => (
-                    <option key={cat.id} value={cat.id} className="bg-slate-900">
+                    <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
                       {cat.label}
                     </option>
                   ))}
@@ -603,7 +639,7 @@
           {/* BOTÃO FLUTUANTE (FAB) PARA MOBILE */}
           <button
             onClick={() => openNewEventModal()}
-            className="sm:hidden fixed bottom-5 right-5 z-40 p-4 bg-gradient-to-tr from-indigo-500 to-violet-600 text-white rounded-full shadow-2xl shadow-indigo-500/50 active:scale-90 transition-transform flex items-center justify-center ring-4 ring-slate-950"
+            className="sm:hidden fixed bottom-5 right-5 z-40 p-4 bg-gradient-to-tr from-indigo-500 to-violet-600 text-white rounded-full shadow-2xl shadow-indigo-500/50 active:scale-90 transition-transform flex items-center justify-center ring-4 ring-white dark:ring-slate-950"
             aria-label="Adicionar Novo Evento"
           >
             <IconPlus />
@@ -611,16 +647,16 @@
 
           {/* MODAL: AGENDAR / EDITAR EVENTO */}
           {isEventModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-sm">
-              <div className="bg-slate-900 border border-slate-800 rounded-t-2xl sm:rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
-                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 dark:bg-slate-950/80 backdrop-blur-sm">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-2xl sm:rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/80 dark:bg-slate-900/50">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     {editingEvent ? <IconEdit /> : <IconPlus />}
                     {editingEvent ? 'Editar Compromisso' : 'Novo Compromisso'}
                   </h3>
                   <button 
                     onClick={() => setIsEventModalOpen(false)}
-                    className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+                    className="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   >
                     <IconX />
                   </button>
@@ -628,7 +664,7 @@
 
                 <form onSubmit={handleSaveEvent} className="p-5 space-y-4 overflow-y-auto flex-1">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">
                       Título do Evento *
                     </label>
                     <input
@@ -637,29 +673,29 @@
                       placeholder="Ex: Reunião, Treino, Consulta..."
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Data *</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Data *</label>
                       <input
                         type="date"
                         required
                         value={formData.date}
                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                       />
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="block text-xs font-semibold text-slate-300 uppercase">Categoria</label>
+                        <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase">Categoria</label>
                         <button
                           type="button"
                           onClick={() => setIsCategoryModalOpen(true)}
-                          className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 underline"
+                          className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
                         >
                           + Criar Nova
                         </button>
@@ -667,10 +703,10 @@
                       <select
                         value={formData.category}
                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
                       >
                         {categories.map(cat => (
-                          <option key={cat.id} value={cat.id} className="bg-slate-900">{cat.label}</option>
+                          <option key={cat.id} value={cat.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">{cat.label}</option>
                         ))}
                       </select>
                     </div>
@@ -678,32 +714,32 @@
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Início</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Início</label>
                       <input
                         type="time"
                         required
                         value={formData.startTime}
                         onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Fim</label>
+                      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Fim</label>
                       <input
                         type="time"
                         required
                         value={formData.endTime}
                         onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Local / Link</label>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Local / Link</label>
                     <div className="relative">
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                         <IconMapPin />
                       </div>
                       <input
@@ -711,28 +747,28 @@
                         placeholder="Ex: Sala 2 ou Google Meet"
                         value={formData.location}
                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                        className="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-9 pr-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl pl-9 pr-3.5 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Notas / Descrição</label>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Notas / Descrição</label>
                     <textarea
                       rows="3"
                       placeholder="Adicione detalhes..."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      className="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
+                      className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
                     ></textarea>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
+                  <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
                     {editingEvent ? (
                       <button
                         type="button"
                         onClick={() => handleDeleteEvent(editingEvent.id)}
-                        className="px-4 py-2.5 text-xs font-semibold rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 flex items-center gap-1.5"
+                        className="px-4 py-2.5 text-xs font-semibold rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 flex items-center gap-1.5"
                       >
                         <IconTrash />
                         Excluir
@@ -743,7 +779,7 @@
                       <button
                         type="button"
                         onClick={() => setIsEventModalOpen(false)}
-                        className="px-4 py-2.5 text-xs font-semibold rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800"
+                        className="px-4 py-2.5 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                       >
                         Cancelar
                       </button>
@@ -804,31 +840,31 @@
       };
 
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 dark:bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+            <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-indigo-500"></span>
                 Criar Nova Categoria
               </h3>
-              <button onClick={onClose} className="text-slate-400 hover:text-white p-1"><IconX /></button>
+              <button onClick={onClose} className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1"><IconX /></button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">Nome da Categoria *</label>
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-1">Nome da Categoria *</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: Viagens, Projetos, Treino..."
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase mb-2">Escolher Cor</label>
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase mb-2">Escolher Cor</label>
                 <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar p-1">
                   {COLOR_OPTIONS.map((col) => (
                     <button
@@ -836,7 +872,7 @@
                       type="button"
                       onClick={() => setSelectedColor(col.id)}
                       className={`p-2 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all ${col.bg} ${col.text} ${col.border} ${
-                        selectedColor === col.id ? 'ring-2 ring-indigo-400 font-bold shadow-md' : 'opacity-70 hover:opacity-100'
+                        selectedColor === col.id ? 'ring-2 ring-indigo-500 font-bold shadow-md' : 'opacity-70 hover:opacity-100'
                       }`}
                     >
                       <span className={`w-3 h-3 rounded-full ${col.dot} shrink-0`}></span>
@@ -846,8 +882,8 @@
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
-                <button type="button" onClick={onClose} className="px-4 py-2 text-xs rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800">
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button type="button" onClick={onClose} className="px-4 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
                   Cancelar
                 </button>
                 <button type="submit" className="px-5 py-2 text-xs rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-md shadow-indigo-500/20">
@@ -898,16 +934,16 @@
       const todayKey = formatDateKey(new Date());
 
       return (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md flex flex-col">
-          <div className="grid grid-cols-7 border-b border-slate-800 bg-slate-900/80 text-center text-[11px] sm:text-xs font-semibold text-slate-400 py-2.5">
+        <div className="bg-white/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col">
+          <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/80 text-center text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 py-2.5">
             {weekDayLabels.map((day, idx) => (
-              <div key={idx} className={idx >= 5 ? 'text-indigo-400/80' : ''}>
+              <div key={idx} className={idx >= 5 ? 'text-indigo-600 dark:text-indigo-400/80' : ''}>
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 auto-rows-fr gap-[1px] bg-slate-800/50 min-h-[500px] sm:min-h-[600px]">
+          <div className="grid grid-cols-7 auto-rows-fr gap-[1px] bg-slate-200 dark:bg-slate-800/50 min-h-[500px] sm:min-h-[600px]">
             {calendarDays.map((dayObj, index) => {
               const dayEvents = events.filter(e => e.date === dayObj.dateKey);
               const isToday = dayObj.dateKey === todayKey;
@@ -916,8 +952,8 @@
                 <div
                   key={index}
                   onClick={() => onSelectDate(dayObj.date)}
-                  className={`min-h-[85px] sm:min-h-[110px] p-1.5 sm:p-2 bg-slate-900/90 transition-all group hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
-                    !dayObj.isCurrentMonth ? 'opacity-40 bg-slate-950/40' : ''
+                  className={`min-h-[85px] sm:min-h-[110px] p-1.5 sm:p-2 bg-white dark:bg-slate-900/90 transition-all group hover:bg-slate-50 dark:hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
+                    !dayObj.isCurrentMonth ? 'opacity-40 bg-slate-100/60 dark:bg-slate-950/40' : ''
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -925,7 +961,7 @@
                       className={`text-[10px] sm:text-xs font-bold w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all ${
                         isToday
                           ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 ring-1 sm:ring-2 ring-indigo-400'
-                          : 'text-slate-300 group-hover:text-white'
+                          : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'
                       }`}
                     >
                       {dayObj.date.getDate()}
@@ -936,7 +972,7 @@
                         e.stopPropagation();
                         onAddEventOnDate(dayObj.dateKey);
                       }}
-                      className="opacity-0 group-hover:opacity-100 p-1 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white transition-all hidden sm:block"
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded bg-slate-200 dark:bg-slate-800 hover:bg-indigo-600 text-slate-600 dark:text-slate-300 hover:text-white transition-all hidden sm:block"
                       title="Novo Evento"
                     >
                       <IconPlus />
@@ -989,25 +1025,25 @@
       }, [currentDate]);
 
       return (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md flex flex-col overflow-x-auto">
-          <div className="grid grid-cols-8 border-b border-slate-800 bg-slate-900/90 sticky top-0 z-10 min-w-[650px]">
-            <div className="p-2 sm:p-3 text-center text-xs font-bold text-slate-500 border-r border-slate-800">Hora</div>
+        <div className="bg-white/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col overflow-x-auto">
+          <div className="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 sticky top-0 z-10 min-w-[650px]">
+            <div className="p-2 sm:p-3 text-center text-xs font-bold text-slate-500 border-r border-slate-200 dark:border-slate-800">Hora</div>
             {weekDays.map((wd, i) => (
-              <div key={i} className="p-2 sm:p-3 text-center border-r border-slate-800/60 last:border-r-0">
-                <span className="text-[10px] sm:text-xs uppercase font-semibold text-slate-400 block">{wd.label}</span>
-                <span className={`inline-block mt-0.5 text-xs sm:text-sm font-bold px-2 py-0.5 rounded-full ${wd.isToday ? 'bg-indigo-600 text-white' : 'text-slate-200'}`}>
+              <div key={i} className="p-2 sm:p-3 text-center border-r border-slate-200/80 dark:border-slate-800/60 last:border-r-0">
+                <span className="text-[10px] sm:text-xs uppercase font-semibold text-slate-500 dark:text-slate-400 block">{wd.label}</span>
+                <span className={`inline-block mt-0.5 text-xs sm:text-sm font-bold px-2 py-0.5 rounded-full ${wd.isToday ? 'bg-indigo-600 text-white' : 'text-slate-800 dark:text-slate-200'}`}>
                   {wd.dayNum}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="divide-y divide-slate-800/50 min-w-[650px]">
+          <div className="divide-y divide-slate-200 dark:divide-slate-800/50 min-w-[650px]">
             {hours.map((hour) => {
               const hourStr = `${String(hour).padStart(2, '0')}:00`;
               return (
                 <div key={hour} className="grid grid-cols-8 min-h-[56px] sm:min-h-[64px]">
-                  <div className="p-1.5 border-r border-slate-800 text-slate-400 text-[10px] sm:text-xs font-mono font-medium text-center flex items-center justify-center bg-slate-900/40">
+                  <div className="p-1.5 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-mono font-medium text-center flex items-center justify-center bg-slate-50 dark:bg-slate-900/40">
                     {hourStr}
                   </div>
 
@@ -1022,7 +1058,7 @@
                       <div
                         key={dayIdx}
                         onClick={() => onAddEvent(wd.dateKey, hourStr)}
-                        className="p-1 border-r border-slate-800/40 last:border-r-0 hover:bg-indigo-950/20 transition-all cursor-pointer"
+                        className="p-1 border-r border-slate-200/60 dark:border-slate-800/40 last:border-r-0 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-all cursor-pointer"
                       >
                         {hourEvents.map(evt => {
                           const meta = getCategoryMeta(evt.category);
@@ -1059,15 +1095,15 @@
 
       return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl backdrop-blur-md flex flex-col">
-            <div className="p-3.5 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
-              <h3 className="text-xs sm:text-sm font-bold text-slate-200 flex items-center gap-2">
+          <div className="lg:col-span-2 bg-white/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col">
+            <div className="p-3.5 border-b border-slate-200 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-900/90 flex items-center justify-between">
+              <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
                 <IconClock /> Horário Detalhado do Dia
               </h3>
-              <span className="text-xs text-slate-400 font-mono">{dayEvents.length} evento(s)</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">{dayEvents.length} evento(s)</span>
             </div>
 
-            <div className="divide-y divide-slate-800/60 overflow-y-auto">
+            <div className="divide-y divide-slate-200 dark:divide-slate-800/60 overflow-y-auto">
               {hours.map((hour) => {
                 const hourStr = `${String(hour).padStart(2, '0')}:00`;
                 const matchingEvents = dayEvents.filter(e => {
@@ -1076,14 +1112,14 @@
                 });
 
                 return (
-                  <div key={hour} className="flex min-h-[64px] sm:min-h-[72px] hover:bg-slate-800/30">
-                    <div className="w-16 sm:w-24 p-2 sm:p-3 border-r border-slate-800 text-[11px] sm:text-xs font-mono text-slate-400 flex items-center justify-center bg-slate-900/40 shrink-0">
+                  <div key={hour} className="flex min-h-[64px] sm:min-h-[72px] hover:bg-slate-100/50 dark:hover:bg-slate-800/30">
+                    <div className="w-16 sm:w-24 p-2 sm:p-3 border-r border-slate-200 dark:border-slate-800 text-[11px] sm:text-xs font-mono text-slate-500 dark:text-slate-400 flex items-center justify-center bg-slate-50 dark:bg-slate-900/40 shrink-0">
                       {hourStr}
                     </div>
 
                     <div 
                       onClick={() => onAddEvent(dateKey, hourStr)}
-                      className="flex-1 p-2 flex flex-col gap-2 cursor-pointer hover:bg-indigo-950/10"
+                      className="flex-1 p-2 flex flex-col gap-2 cursor-pointer hover:bg-indigo-50/40 dark:hover:bg-indigo-950/10"
                     >
                       {matchingEvents.map(evt => {
                         const meta = getCategoryMeta(evt.category);
@@ -1091,10 +1127,10 @@
                           <div
                             key={evt.id}
                             onClick={(e) => onEditEvent(evt, e)}
-                            className={`p-3 rounded-xl border ${meta.bg} ${meta.border} ${meta.text} flex items-start justify-between gap-3 shadow-md`}
+                            className={`p-3 rounded-xl border ${meta.bg} ${meta.border} ${meta.text} flex items-start justify-between gap-3 shadow-sm dark:shadow-md`}
                           >
                             <div>
-                              <div className="font-bold text-xs sm:text-sm text-white flex items-center gap-2">
+                              <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white flex items-center gap-2">
                                 <span className={`w-2 h-2 rounded-full ${meta.dot}`}></span>
                                 {evt.title}
                               </div>
@@ -1106,7 +1142,7 @@
 
                             <button
                               onClick={(e) => onDeleteEvent(evt.id, e)}
-                              className="p-1.5 rounded hover:bg-rose-500/20 text-rose-400 shrink-0"
+                              className="p-1.5 rounded hover:bg-rose-500/20 text-rose-500 dark:text-rose-400 shrink-0"
                             >
                               <IconTrash />
                             </button>
@@ -1120,8 +1156,8 @@
             </div>
           </div>
 
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-            <h3 className="text-xs sm:text-sm font-bold text-slate-200 mb-3">Resumo do Dia</h3>
+          <div className="bg-white/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm dark:shadow-xl">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 mb-3">Resumo do Dia</h3>
             {dayEvents.length === 0 ? (
               <p className="text-slate-500 text-xs">Nenhum evento agendado.</p>
             ) : (
@@ -1129,13 +1165,13 @@
                 {dayEvents.map(evt => {
                   const meta = getCategoryMeta(evt.category);
                   return (
-                    <div key={evt.id} onClick={(e) => onEditEvent(evt, e)} className="p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl cursor-pointer">
-                      <div className="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                    <div key={evt.id} onClick={(e) => onEditEvent(evt, e)} className="p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl cursor-pointer">
+                      <div className="flex justify-between text-xs font-mono text-slate-500 dark:text-slate-400 mb-1">
                         <span>{evt.startTime} - {evt.endTime}</span>
                         <span className={`${meta.text}`}>{meta.label}</span>
                       </div>
-                      <div className="text-xs font-bold text-white">{evt.title}</div>
-                      {evt.location && <div className="text-[10px] text-slate-400 mt-0.5">{evt.location}</div>}
+                      <div className="text-xs font-bold text-slate-900 dark:text-white">{evt.title}</div>
+                      {evt.location && <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{evt.location}</div>}
                     </div>
                   );
                 })}
@@ -1228,51 +1264,51 @@ function doPost(e) {
       };
 
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <h3 className="text-sm sm:text-base font-bold text-emerald-400 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 dark:bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full p-5 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h3 className="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
                 <IconSheets /> Sincronizar com Google Sheets
               </h3>
-              <button onClick={onClose} className="text-slate-400 hover:text-white p-1"><IconX /></button>
+              <button onClick={onClose} className="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1"><IconX /></button>
             </div>
 
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600 dark:text-slate-300">
               Cole o código no Google Apps Script da sua planilha e selecione Implantação como <strong>Web App</strong> (Acesso: <em>Qualquer pessoa</em>).
             </p>
 
             <div className="relative">
-              <button onClick={copyCode} className="absolute right-2 top-2 text-xs font-semibold text-indigo-400 hover:text-indigo-300 bg-slate-900 px-2.5 py-1 rounded border border-slate-700">
+              <button onClick={copyCode} className="absolute right-2 top-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline bg-white dark:bg-slate-900 px-2.5 py-1 rounded border border-slate-300 dark:border-slate-700">
                 {copied ? 'Copiado!' : 'Copiar Código'}
               </button>
-              <pre className="bg-slate-950 p-3 rounded-xl text-[10px] font-mono text-slate-300 overflow-x-auto border border-slate-800 max-h-32">
+              <pre className="bg-slate-100 dark:bg-slate-950 p-3 rounded-xl text-[10px] font-mono text-slate-800 dark:text-slate-300 overflow-x-auto border border-slate-200 dark:border-slate-800 max-h-32">
                 {appsScriptCode}
               </pre>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">URL do Web App do Google Script</label>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">URL do Web App do Google Script</label>
               <input
                 type="text"
                 placeholder="https://script.google.com/macros/s/.../exec"
                 value={sheetUrl}
                 onChange={(e) => setSheetUrl(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-mono"
               />
             </div>
 
             {syncStatus.message && (
               <div className={`p-3 rounded-xl text-xs border ${
-                syncStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
-                syncStatus.type === 'error' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
-                'bg-indigo-500/10 text-indigo-300 border-indigo-500/30'
+                syncStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' :
+                syncStatus.type === 'error' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' :
+                'bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-500/30'
               }`}>
                 {syncStatus.message}
               </div>
             )}
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
-              <button onClick={onClose} className="px-4 py-2 text-xs rounded-xl border border-slate-700 text-slate-300">Fechar</button>
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+              <button onClick={onClose} className="px-4 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300">Fechar</button>
               <button onClick={onSync} disabled={isSyncing} className="px-5 py-2 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-md">
                 {isSyncing ? 'Sincronizando...' : 'Sincronizar Agora'}
               </button>
