@@ -50,39 +50,82 @@
       -webkit-user-select: none;
     }
 
-    /* ESTILOS DE IMPRESSÃO (VISTA SEMANAL E GERAL) */
+    /* ESTILOS DE IMPRESSÃO (FORMATADO PARA 1 PÁGINA A4 LANDSCAPE) */
     @media print {
       @page {
         size: A4 landscape;
-        margin: 8mm;
+        margin: 4mm 5mm;
       }
-      body {
+      html, body {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
         background: #ffffff !important;
         color: #0f172a !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
       /* Ocultar elementos de navegação e botões durante a impressão */
-      .no-print, header, nav, button, input, select, .touch-swipe-zone > div.sm\:hidden, .fab-btn {
+      .no-print, header, nav, button, input, select, .touch-swipe-zone > div.sm\:hidden, .fab-btn, .sm\:hidden {
         display: none !important;
       }
       .print-header {
         display: flex !important;
+        padding-bottom: 4px !important;
+        margin-bottom: 4px !important;
       }
       main {
         padding: 0 !important;
+        margin: 0 !important;
         max-width: 100% !important;
+        height: calc(100vh - 38px) !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
       }
       .print-area {
         border: 1px solid #cbd5e1 !important;
         box-shadow: none !important;
         width: 100% !important;
         max-width: 100% !important;
+        height: 100% !important;
         background: white !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
       }
       .print-area * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        page-break-inside: avoid !important;
+      }
+      /* Redução proporcional de tamanhos para a vista semanal e mensal caberem exatamente em 1 página */
+      .print-area .divide-y > div {
+        min-height: 0 !important;
+        height: calc((100vh - 75px) / 16) !important;
+        padding-top: 1px !important;
+        padding-bottom: 1px !important;
+      }
+      .print-area .min-h-\[500px\], .print-area .sm\:min-h-\[600px\] {
+        min-height: 0 !important;
+        height: calc(100vh - 75px) !important;
+      }
+      .print-area .min-h-\[90px\], .print-area .sm\:min-h-\[110px\] {
+        min-height: 0 !important;
+      }
+      .print-area .text-xs, .print-area .text-\[11px\] {
+        font-size: 8px !important;
+        line-height: 1.1 !important;
+      }
+      .print-area .text-\[10px\], .print-area .text-\[9px\] {
+        font-size: 7px !important;
+        line-height: 1.0 !important;
+      }
+      .print-area .p-1.5, .print-area .p-2.5, .print-area .p-2, .print-area .p-3 {
+        padding: 1px 2px !important;
+      }
+      .print-area .gap-1, .print-area .gap-2 {
+        gap: 2px !important;
       }
     }
     .print-header {
