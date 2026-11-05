@@ -59,16 +59,81 @@
     const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
     // --- CONFIGURAÇÃO MANUAL DO GOOGLE SHEETS ---
-    // Cole aqui o seu URL do Google Apps Script entre as aspas para o ter sempre pré-configurado em todos os dispositivos!
-    const URL_PREDEFINIDO_SHEETS = "https://script.google.com/macros/s/AKfycbx-vvWBLs0jHig2sr0U0z6ich7yTcPGETMGHMNBPYY8P75BXuYbrv1eRR-loOUq8g1rSA/exec"; // Ex: "https://script.google.com/macros/s/xyz.../exec"
+    // Cole aqui o seu URL do Apps Script entre as aspas para que todos os dispositivos o carreguem automaticamente.
+    const URL_PREDEFINIDO_SHEETS = "https://script.google.com/macros/s/AKfycbzRCMW-5zW6ooiVasMt7lYCxIw7Tl1geTGBXSuKsE9zymCTG0RBE9TJgUUVWGAyhFqfNQ/exec";
+
+    // --- HELPER DE NORMALIZAÇÃO DE DATAS E HORAS ---
+    const normalizeDateStr = (dateStr) => {
+      if (!dateStr) return '';
+      let str = String(dateStr).trim();
+      
+      // Se já está no formato YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+        return str;
+      }
+      
+      // Se for formato ISO string (ex: "2026-11-05T00:00:00.000Z")
+      if (str.includes('T')) {
+        str = str.split('T')[0];
+        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+      }
+
+      // Se for formato DD/MM/YYYY (pt-PT)
+      const ddmmyyyyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if (ddmmyyyyMatch) {
+        const day = ddmmyyyyMatch[1].padStart(2, '0');
+        const month = ddmmyyyyMatch[2].padStart(2, '0');
+        const year = ddmmyyyyMatch[3];
+        return `${year}-${month}-${day}`;
+      }
+
+      // Tentar conversão via objeto Date
+      const parsed = new Date(str);
+      if (!isNaN(parsed.getTime())) {
+        const year = parsed.getFullYear();
+        const month = String(parsed.getMonth() + 1).padStart(2, '0');
+        const day = String(parsed.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+
+      return str;
+    };
+
+    const normalizeTimeStr = (timeStr, defaultTime = '09:00') => {
+      if (!timeStr) return defaultTime;
+      let str = String(timeStr).trim();
+
+      const match = str.match(/(\d{1,2}):(\d{2})/);
+      if (match) {
+        const h = match[1].padStart(2, '0');
+        const m = match[2];
+        return `${h}:${m}`;
+      }
+
+      return defaultTime;
+    };
+
+    const parseHourNumber = (timeStr) => {
+      const norm = normalizeTimeStr(timeStr, '09:00');
+      const h = parseInt(norm.split(':')[0], 10);
+      return isNaN(h) ? 9 : h;
+    };
+
+    const formatDateKey = (date) => {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
 
     // --- ÍCONES SVG ---
     const IconCalendar = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
     const IconChevronLeft = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>;
     const IconChevronRight = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>;
     const IconPlus = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>;
-    const IconMapPin = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>;
-    const IconClock = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
+    const IconMapPin = () => <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>;
+    const IconClock = () => <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
     const IconTrash = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>;
     const IconEdit = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>;
     const IconGrid = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>;
@@ -107,21 +172,24 @@
       { id: 'social', label: 'Lazer & Social', color: 'cyan' },
     ];
 
-    const formatDateKey = (date) => {
-      const d = new Date(date);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-
     const INITIAL_EVENTS = [];
 
     // --- COMPONENTE PRINCIPAL ---
     function App() {
       const [events, setEvents] = useState(() => {
         const saved = localStorage.getItem('agenda_events_v3');
-        return saved ? JSON.parse(saved) : INITIAL_EVENTS;
+        if (!saved) return INITIAL_EVENTS;
+        try {
+          const parsed = JSON.parse(saved);
+          return parsed.map(evt => ({
+            ...evt,
+            date: normalizeDateStr(evt.date),
+            startTime: normalizeTimeStr(evt.startTime, '09:00'),
+            endTime: normalizeTimeStr(evt.endTime, '10:00')
+          }));
+        } catch(e) {
+          return INITIAL_EVENTS;
+        }
       });
 
       const [categories, setCategories] = useState(() => {
@@ -146,8 +214,7 @@
 
       // Google Sheets
       const [sheetUrl, setSheetUrl] = useState(() => {
-        // Dá prioridade ao URL predefinido no código (se existir e for um link válido)
-        if (URL_PREDEFINIDO_SHEETS.startsWith('https://')) {
+        if (URL_PREDEFINIDO_SHEETS && URL_PREDEFINIDO_SHEETS.startsWith('https://')) {
           return URL_PREDEFINIDO_SHEETS;
         }
         return localStorage.getItem('agenda_sheet_url') || '';
@@ -216,7 +283,7 @@
 
         if (!silent) {
           setIsSyncing(true);
-          setSyncStatus({ type: 'info', message: 'A carregar dados da Google Sheets...' });
+          setSyncStatus({ type: 'info', message: 'A carregar dados do Google Sheets...' });
         }
 
         try {
@@ -225,22 +292,12 @@
 
           if (resData && resData.status === 'success') {
             if (Array.isArray(resData.events)) {
-              
-              // --- CORREÇÃO DEFINITIVA DE DATAS ---
-              // Normalizar as datas para garantir formato YYYY-MM-DD independentemente do formato do Sheets
-              const formattedEvents = resData.events.map(evt => {
-                let fixedDate = evt.date ? String(evt.date) : '';
-                
-                // Se a data NÃO estiver no formato perfeito YYYY-MM-DD (ex: "Thu Nov 05 2026...", "2026-11-05T00:00:00.000Z")
-                if (fixedDate && !/^\d{4}-\d{2}-\d{2}$/.test(fixedDate.trim())) {
-                  const d = new Date(fixedDate);
-                  if (!isNaN(d.getTime())) {
-                    fixedDate = formatDateKey(d);
-                  }
-                }
-                
-                return { ...evt, date: fixedDate.trim() };
-              });
+              const formattedEvents = resData.events.map(evt => ({
+                ...evt,
+                date: normalizeDateStr(evt.date),
+                startTime: normalizeTimeStr(evt.startTime, '09:00'),
+                endTime: normalizeTimeStr(evt.endTime, '10:00')
+              }));
 
               setEvents(formattedEvents);
               localStorage.setItem('agenda_events_v3', JSON.stringify(formattedEvents));
@@ -250,13 +307,13 @@
               localStorage.setItem('agenda_categories_v3', JSON.stringify(resData.categories));
             }
             if (!silent) {
-              setSyncStatus({ type: 'success', message: 'Dados atualizados e sincronizados!' });
+              setSyncStatus({ type: 'success', message: 'Dados sincronizados com sucesso!' });
             }
           }
         } catch (err) {
           console.error("Erro na leitura da Google Sheets:", err);
           if (!silent) {
-            setSyncStatus({ type: 'error', message: 'Erro ao carregar dados da Google Sheets.' });
+            setSyncStatus({ type: 'error', message: 'Erro ao carregar dados do Google Sheets.' });
           }
         } finally {
           if (!silent) setIsSyncing(false);
@@ -281,13 +338,13 @@
           const resData = await response.json();
 
           if (resData.status === 'success') {
-            setSyncStatus({ type: 'success', message: 'Alterações guardadas na Google Sheets!' });
+            setSyncStatus({ type: 'success', message: 'Alterações guardadas no Google Sheets!' });
           } else {
             throw new Error(resData.message || 'Erro ao guardar dados.');
           }
         } catch (err) {
           console.error("Erro no envio para Google Sheets:", err);
-          setSyncStatus({ type: 'error', message: 'Erro na conexão com a Google Sheets.' });
+          setSyncStatus({ type: 'error', message: 'Erro de conexão ao Google Sheets.' });
         } finally {
           setIsSyncing(false);
         }
@@ -328,8 +385,8 @@
       const filteredEvents = useMemo(() => {
         return events.filter(evt => {
           const matchesSearch = 
-            evt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            evt.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (evt.title && evt.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (evt.location && evt.location.toLowerCase().includes(searchQuery.toLowerCase())) ||
             (evt.notes && evt.notes.toLowerCase().includes(searchQuery.toLowerCase()));
           
           const matchesCategory = selectedCategoryFilter === 'all' || evt.category === selectedCategoryFilter;
@@ -387,14 +444,16 @@
       };
 
       const openNewEventModal = (dateStr = formatDateKey(currentDate), timeStr = '09:00') => {
-        const endH = parseInt(timeStr.split(':')[0], 10) + 1;
-        const endStr = `${String(endH % 24).padStart(2, '0')}:${timeStr.split(':')[1] || '00'}`;
+        const startNorm = normalizeTimeStr(timeStr, '09:00');
+        const startH = parseHourNumber(startNorm);
+        const endH = (startH + 1) % 24;
+        const endStr = `${String(endH).padStart(2, '0')}:${startNorm.split(':')[1] || '00'}`;
 
         setEditingEvent(null);
         setFormData({
           title: '',
-          date: dateStr,
-          startTime: timeStr,
+          date: normalizeDateStr(dateStr),
+          startTime: startNorm,
           endTime: endStr,
           location: '',
           category: categories[0]?.id || 'work',
@@ -406,7 +465,12 @@
       const openEditEventModal = (eventObj, e) => {
         if (e) e.stopPropagation();
         setEditingEvent(eventObj);
-        setFormData({ ...eventObj });
+        setFormData({
+          ...eventObj,
+          date: normalizeDateStr(eventObj.date),
+          startTime: normalizeTimeStr(eventObj.startTime, '09:00'),
+          endTime: normalizeTimeStr(eventObj.endTime, '10:00')
+        });
         setIsEventModalOpen(true);
       };
 
@@ -414,11 +478,18 @@
         e.preventDefault();
         if (!formData.title.trim()) return;
 
+        const normalizedForm = {
+          ...formData,
+          date: normalizeDateStr(formData.date),
+          startTime: normalizeTimeStr(formData.startTime, '09:00'),
+          endTime: normalizeTimeStr(formData.endTime, '10:00')
+        };
+
         let updatedEvents;
         if (editingEvent) {
-          updatedEvents = events.map(evt => evt.id === editingEvent.id ? { ...formData, id: editingEvent.id } : evt);
+          updatedEvents = events.map(evt => evt.id === editingEvent.id ? { ...normalizedForm, id: editingEvent.id } : evt);
         } else {
-          const newEvt = { ...formData, id: Date.now().toString() };
+          const newEvt = { ...normalizedForm, id: Date.now().toString() };
           updatedEvents = [...events, newEvt];
         }
 
@@ -454,13 +525,13 @@
 
       const handleSyncGoogleSheets = async () => {
         if (!sheetUrl.trim()) {
-          setSyncStatus({ type: 'error', message: 'Insira a URL do Apps Script do Google.' });
+          setSyncStatus({ type: 'error', message: 'Insira o URL do Apps Script do Google.' });
           return;
         }
         await fetchFromSheets(false);
       };
 
-      // FORMATADOR DA BARRA DE NAVEGAÇÃO DE DATAS
+      // FORMATADOR DA BARRA DE NAVEGAÇÃO DE DATAS (pt-PT)
       const headerDateLabel = useMemo(() => {
         const locale = 'pt-PT';
         if (viewMode === 'month') {
@@ -510,7 +581,7 @@
                 </h1>
                 <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                   <span className={`w-1.5 h-1.5 rounded-full ${isSyncing ? 'bg-amber-500 animate-ping' : sheetUrl ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></span>
-                  {isSyncing ? 'A sincronizar...' : sheetUrl ? 'Auto-sync Sheets Ativo' : 'Apenas Local'}
+                  {isSyncing ? 'A sincronizar...' : sheetUrl ? 'Auto-sync Google Sheets Ativo' : 'Apenas Local'}
                 </p>
               </div>
             </div>
@@ -576,7 +647,7 @@
                 className="px-3 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-md shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-1"
               >
                 <IconPlus />
-                <span className="hidden sm:inline">Novo Evento</span>
+                <span className="hidden sm:inline">Novo Compromisso</span>
               </button>
             </div>
           </header>
@@ -647,7 +718,7 @@
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><IconSearch /></span>
                 <input
                   type="text"
-                  placeholder="Buscar..."
+                  placeholder="Pesquisar..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700/80 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
@@ -750,7 +821,7 @@
                 <form onSubmit={handleSaveEvent} className="p-5 space-y-4 overflow-y-auto flex-1">
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
-                      Título do Evento *
+                      Título do Compromisso *
                     </label>
                     <input
                       type="text"
@@ -806,7 +877,7 @@
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
-                        Início
+                        Hora Início
                       </label>
                       <input
                         type="time"
@@ -819,7 +890,7 @@
 
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
-                        Término
+                        Hora Fim
                       </label>
                       <input
                         type="time"
@@ -833,13 +904,13 @@
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
-                      Local
+                      Local do Evento
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><IconMapPin /></span>
                       <input
                         type="text"
-                        placeholder="Ex: Endereço ou Google Meet"
+                        placeholder="Ex: Escritório, Google Meet, Coimbra..."
                         value={formData.location}
                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                         className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all"
@@ -849,11 +920,11 @@
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
-                      Notas
+                      Notas / Observações
                     </label>
                     <textarea
                       rows={2}
-                      placeholder="Adicione observações..."
+                      placeholder="Adicione notas adicionais..."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                       className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all resize-none"
@@ -1041,14 +1112,14 @@
 
           <div className="grid grid-cols-7 auto-rows-fr gap-[1px] bg-slate-200 dark:bg-slate-800/50 min-h-[500px] sm:min-h-[600px]">
             {calendarDays.map((dayObj, index) => {
-              const dayEvents = events.filter(e => e.date === dayObj.dateKey);
+              const dayEvents = events.filter(e => normalizeDateStr(e.date) === dayObj.dateKey);
               const isToday = dayObj.dateKey === todayKey;
 
               return (
                 <div
                   key={index}
                   onClick={() => onSelectDate(dayObj.date)}
-                  className={`min-h-[85px] sm:min-h-[105px] p-1.5 sm:p-2 bg-white dark:bg-slate-900/90 transition-all group hover:bg-indigo-50/50 dark:hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
+                  className={`min-h-[90px] sm:min-h-[110px] p-1.5 sm:p-2 bg-white dark:bg-slate-900/90 transition-all group hover:bg-indigo-50/50 dark:hover:bg-slate-800/50 flex flex-col justify-between cursor-pointer ${
                     !dayObj.isCurrentMonth ? 'opacity-40 bg-slate-50 dark:bg-slate-950/40' : ''
                   }`}
                 >
@@ -1062,22 +1133,32 @@
                     <button
                       onClick={(e) => { e.stopPropagation(); onAddEventOnDate(dayObj.dateKey); }}
                       className="opacity-0 group-hover:opacity-100 p-1 rounded bg-slate-200 dark:bg-slate-800 hover:bg-indigo-600 text-slate-700 dark:text-slate-300 hover:text-white transition-all"
+                      title="Novo compromisso"
                     >
                       <IconPlus />
                     </button>
                   </div>
 
-                  <div className="space-y-1 flex-1 overflow-y-auto max-h-[75px] custom-scrollbar">
+                  <div className="space-y-1 flex-1 overflow-y-auto max-h-[80px] custom-scrollbar">
                     {dayEvents.map((evt) => {
                       const meta = getCategoryMeta(evt.category);
                       return (
                         <div
                           key={evt.id}
                           onClick={(e) => onEditEvent(evt, e)}
-                          className={`px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] border font-medium truncate transition-all flex items-center justify-between gap-1 ${meta.bg} ${meta.text} ${meta.border}`}
+                          className={`p-1.5 rounded-lg text-[10px] sm:text-[11px] border font-medium transition-all shadow-xs flex flex-col gap-0.5 ${meta.bg} ${meta.text} ${meta.border}`}
+                          title={`${evt.title}${evt.location ? ` - Local: ${evt.location}` : ''}`}
                         >
-                          <span className="truncate">{evt.title}</span>
-                          <span className="text-[9px] font-mono shrink-0 hidden sm:inline">{evt.startTime}</span>
+                          <div className="flex items-center justify-between gap-1 truncate font-semibold">
+                            <span className="truncate">{evt.title}</span>
+                            <span className="text-[9px] font-mono shrink-0 hidden sm:inline">{normalizeTimeStr(evt.startTime)}</span>
+                          </div>
+                          {evt.location && (
+                            <div className="text-[9px] opacity-90 truncate flex items-center gap-0.5 font-sans font-normal">
+                              <IconMapPin />
+                              <span className="truncate">{evt.location}</span>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -1092,7 +1173,7 @@
 
     // --- VISTA DA SEMANA ---
     function WeekView({ currentDate, events, getCategoryMeta, onAddEvent, onEditEvent }) {
-      const hours = Array.from({ length: 15 }, (_, i) => i + 8);
+      const hours = Array.from({ length: 16 }, (_, i) => i + 7); // 07:00 a 22:00
 
       const weekDays = useMemo(() => {
         const dayOfWeek = (currentDate.getDay() + 6) % 7;
@@ -1133,15 +1214,15 @@
               const hourStr = `${String(hour).padStart(2, '0')}:00`;
 
               return (
-                <div key={hour} className="grid grid-cols-8 min-h-[56px]">
+                <div key={hour} className="grid grid-cols-8 min-h-[64px]">
                   <div className="p-1 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-mono font-medium text-center flex items-center justify-center bg-slate-50/50 dark:bg-slate-900/40">
                     {hourStr}
                   </div>
 
                   {weekDays.map((wd, dayIdx) => {
                     const hourEvents = events.filter(e => {
-                      if (e.date !== wd.dateKey) return false;
-                      const startH = parseInt(e.startTime.split(':')[0], 10);
+                      if (normalizeDateStr(e.date) !== wd.dateKey) return false;
+                      const startH = parseHourNumber(e.startTime);
                       return startH === hour;
                     });
 
@@ -1157,10 +1238,19 @@
                             <div
                               key={evt.id}
                               onClick={(e) => onEditEvent(evt, e)}
-                              className={`p-1.5 rounded-lg border text-xs font-medium ${meta.bg} ${meta.text} ${meta.border} shadow-sm mb-1`}
+                              className={`p-1.5 rounded-lg border text-xs font-medium ${meta.bg} ${meta.text} ${meta.border} shadow-sm mb-1 transition-all hover:scale-[1.01]`}
                             >
                               <div className="font-semibold truncate text-[11px]">{evt.title}</div>
-                              <div className="text-[9px] opacity-80 font-mono">{evt.startTime} - {evt.endTime}</div>
+                              <div className="text-[10px] opacity-90 flex items-center gap-1 font-mono mt-0.5">
+                                <IconClock />
+                                <span>{normalizeTimeStr(evt.startTime)} - {normalizeTimeStr(evt.endTime)}</span>
+                              </div>
+                              {evt.location && (
+                                <div className="text-[10px] opacity-85 truncate flex items-center gap-1 mt-0.5 font-sans">
+                                  <IconMapPin />
+                                  <span className="truncate">{evt.location}</span>
+                                </div>
+                              )}
                             </div>
                           );
                         })}
@@ -1178,7 +1268,7 @@
     // --- VISTA DO DIA ---
     function DayView({ currentDate, events, getCategoryMeta, onAddEvent, onEditEvent, onDeleteEvent }) {
       const dateKey = formatDateKey(currentDate);
-      const dayEvents = events.filter(e => e.date === dateKey);
+      const dayEvents = events.filter(e => normalizeDateStr(e.date) === dateKey);
       const hours = Array.from({ length: 16 }, (_, i) => i + 7);
 
       return (
@@ -1197,7 +1287,7 @@
             <div className="divide-y divide-slate-200 dark:divide-slate-800/60 overflow-y-auto">
               {hours.map((hour) => {
                 const hourStr = `${String(hour).padStart(2, '0')}:00`;
-                const matchingEvents = dayEvents.filter(e => parseInt(e.startTime.split(':')[0], 10) === hour);
+                const matchingEvents = dayEvents.filter(e => parseHourNumber(e.startTime) === hour);
 
                 return (
                   <div key={hour} className="flex min-h-[64px] hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all">
@@ -1215,23 +1305,29 @@
                           <div
                             key={evt.id}
                             onClick={(e) => onEditEvent(evt, e)}
-                            className={`p-2.5 rounded-xl border ${meta.bg} ${meta.border} ${meta.text} shadow-sm flex items-start justify-between gap-2`}
+                            className={`p-3 rounded-xl border ${meta.bg} ${meta.border} ${meta.text} shadow-sm flex items-start justify-between gap-2 transition-all hover:translate-x-0.5`}
                           >
                             <div className="space-y-1">
                               <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                                <span className={`w-2 h-2 rounded-full ${meta.dot}`}></span>
+                                <span className={`w-2.5 h-2.5 rounded-full ${meta.dot}`}></span>
                                 {evt.title}
                               </div>
-                              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] font-mono">
-                                <span>{evt.startTime} - {evt.endTime}</span>
-                                {evt.location && <span className="font-sans flex items-center gap-1"><IconMapPin />{evt.location}</span>}
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono">
+                                <span className="flex items-center gap-1"><IconClock />{normalizeTimeStr(evt.startTime)} - {normalizeTimeStr(evt.endTime)}</span>
+                                {evt.location && (
+                                  <span className="font-sans flex items-center gap-1 bg-white/40 dark:bg-slate-950/40 px-1.5 py-0.5 rounded border border-current/20">
+                                    <IconMapPin />
+                                    <strong className="font-semibold">{evt.location}</strong>
+                                  </span>
+                                )}
                               </div>
-                              {evt.notes && <p className="text-[11px] opacity-80 italic line-clamp-1">{evt.notes}</p>}
+                              {evt.notes && <p className="text-[11px] opacity-80 italic line-clamp-2 mt-1">{evt.notes}</p>}
                             </div>
 
                             <button
                               onClick={(e) => onDeleteEvent(evt.id, e)}
-                              className="p-1 rounded text-rose-500 hover:bg-rose-500/10"
+                              className="p-1 rounded text-rose-500 hover:bg-rose-500/10 transition-all shrink-0"
+                              title="Apagar compromisso"
                             >
                               <IconTrash />
                             </button>
@@ -1248,18 +1344,24 @@
           <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm dark:shadow-xl h-fit">
             <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-3">Resumo do Dia</h3>
             {dayEvents.length === 0 ? (
-              <p className="text-xs text-slate-500 text-center py-6">Sem compromissos marcados.</p>
+              <p className="text-xs text-slate-500 text-center py-6">Sem compromissos agendados para este dia.</p>
             ) : (
               <div className="space-y-2">
                 {dayEvents.map(evt => {
                   const meta = getCategoryMeta(evt.category);
                   return (
-                    <div key={evt.id} onClick={(e) => onEditEvent(evt, e)} className="p-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl cursor-pointer">
+                    <div key={evt.id} onClick={(e) => onEditEvent(evt, e)} className="p-2.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl cursor-pointer hover:border-indigo-500/50 transition-all">
                       <div className="flex items-center justify-between mb-1">
                         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${meta.bg} ${meta.text}`}>{meta.label}</span>
-                        <span className="text-[10px] font-mono text-slate-400">{evt.startTime}</span>
+                        <span className="text-[10px] font-mono text-slate-400">{normalizeTimeStr(evt.startTime)}</span>
                       </div>
                       <div className="font-semibold text-xs text-slate-900 dark:text-slate-100">{evt.title}</div>
+                      {evt.location && (
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-1">
+                          <IconMapPin />
+                          <span>{evt.location}</span>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -1272,7 +1374,6 @@
 
     // --- MODAL DE CONFIGURAÇÃO DO GOOGLE SHEETS ---
     function GoogleSheetsSyncModal({ isOpen, onClose, sheetUrl, setSheetUrl, onSync, isSyncing, syncStatus }) {
-      // ATUALIZADO: Código robusto que aponta especificamente para as abas corretas!
       const appsScriptCode = `function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheetEvents = ss.getSheetByName("Eventos") || ss.getSheets()[0];
@@ -1280,7 +1381,7 @@
   
   var events = [];
   if (sheetEvents) {
-    var data = sheetEvents.getDataRange().getValues();
+    var data = sheetEvents.getDataRange().getDisplayValues();
     for (var i = 1; i < data.length; i++) {
       if (data[i][0]) {
         events.push({
@@ -1299,7 +1400,7 @@
   
   var categories = [];
   if (sheetCats) {
-    var catData = sheetCats.getDataRange().getValues();
+    var catData = sheetCats.getDataRange().getDisplayValues();
     for (var j = 1; j < catData.length; j++) {
       if (catData[j][0]) {
         categories.push({
@@ -1331,7 +1432,7 @@ function doPost(e) {
     if (contents.events && contents.events.length > 0) {
       contents.events.forEach(function(evt) {
         sheetEvents.appendRow([
-          evt.id, evt.title, evt.date, evt.startTime, evt.endTime, evt.location, evt.category, evt.notes || ""
+          evt.id, evt.title, evt.date, evt.startTime, evt.endTime, evt.location || "", evt.category, evt.notes || ""
         ]);
       });
     }
@@ -1348,7 +1449,7 @@ function doPost(e) {
       });
     }
     
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Planilha atualizada!" }))
+    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Folha de cálculo atualizada!" }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
@@ -1367,8 +1468,8 @@ function doPost(e) {
             </div>
 
             <div className="text-xs text-slate-600 dark:text-slate-300 space-y-2 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-amber-500/30">
-              <p className="font-semibold text-amber-600 dark:text-amber-400">ATENÇÃO: Código Atualizado!</p>
-              <p className="text-[11px]">Se copiou o código anteriormente a partir daqui, por favor <strong>copie este novo código</strong>, substitua no Apps Script e publique uma <strong>Nova Implantação</strong>. Isto previne que os eventos sejam apagados acidentalmente!</p>
+              <p className="font-semibold text-amber-600 dark:text-amber-400">ATENÇÃO: Código Apps Script Atualizado!</p>
+              <p className="text-[11px]">Se copiou o código anteriormente, por favor <strong>copie este novo código</strong> para o Apps Script e crie uma <strong>Nova Implantação</strong>. Esta nova versão garante que as horas e locais aparecem perfeitamente nas vistas de semana e dia!</p>
             </div>
 
             <div>
