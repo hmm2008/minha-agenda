@@ -58,6 +58,10 @@
   <script type="text/babel">
     const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
+    // --- CONFIGURAÇÃO MANUAL DO GOOGLE SHEETS ---
+    // Cole aqui o seu URL do Google Apps Script entre as aspas para o ter sempre pré-configurado em todos os dispositivos!
+    const URL_PREDEFINIDO_SHEETS = "https://script.google.com/macros/s/AKfycbx-vvWBLs0jHig2sr0U0z6ich7yTcPGETMGHMNBPYY8P75BXuYbrv1eRR-loOUq8g1rSA/exec"; // Ex: "https://script.google.com/macros/s/xyz.../exec"
+
     // --- ÍCONES SVG ---
     const IconCalendar = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>;
     const IconChevronLeft = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>;
@@ -141,7 +145,13 @@
       const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
       // Google Sheets
-      const [sheetUrl, setSheetUrl] = useState(() => localStorage.getItem('agenda_sheet_url') || '');
+      const [sheetUrl, setSheetUrl] = useState(() => {
+        // Dá prioridade ao URL predefinido no código (se existir e for um link válido)
+        if (URL_PREDEFINIDO_SHEETS.startsWith('https://')) {
+          return URL_PREDEFINIDO_SHEETS;
+        }
+        return localStorage.getItem('agenda_sheet_url') || '';
+      });
       const [isSyncing, setIsSyncing] = useState(false);
       const [syncStatus, setSyncStatus] = useState({ type: null, message: '' });
 
