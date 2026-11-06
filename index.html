@@ -65,7 +65,6 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      /* Ocultar elementos de navegação e botões durante a impressão */
       .no-print, header, nav, button, input, select, .touch-swipe-zone > div.sm\:hidden, .fab-btn, .sm\:hidden {
         display: none !important;
       }
@@ -99,7 +98,6 @@
         print-color-adjust: exact !important;
         page-break-inside: avoid !important;
       }
-      /* Redução proporcional de tamanhos para a vista semanal e mensal caberem exatamente em 1 página */
       .print-area .divide-y > div {
         min-height: 0 !important;
         height: calc((100vh - 75px) / 16) !important;
@@ -141,7 +139,6 @@
     const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
     // --- CONFIGURAÇÃO MANUAL DO GOOGLE SHEETS ---
-    // Cole aqui o seu URL do Apps Script entre as aspas para que todos os dispositivos o carreguem automaticamente.
     const URL_PREDEFINIDO_SHEETS = "https://script.google.com/macros/s/AKfycbyiFl6DwH-3zY4UFlE1Reqi0UJ3smr5DqxP4ZXcCXyRdzW1AETFBCWIF5_X1hiKZvKoYw/exec";
 
     // --- HELPER DE NORMALIZAÇÃO DE DATAS E HORAS ---
@@ -149,18 +146,15 @@
       if (!dateStr) return '';
       let str = String(dateStr).trim();
       
-      // Se já está no formato YYYY-MM-DD
       if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
         return str;
       }
       
-      // Se for formato ISO string (ex: "2026-11-05T00:00:00.000Z")
       if (str.includes('T')) {
         str = str.split('T')[0];
         if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
       }
 
-      // Se for formato DD/MM/YYYY (pt-PT)
       const ddmmyyyyMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
       if (ddmmyyyyMatch) {
         const day = ddmmyyyyMatch[1].padStart(2, '0');
@@ -169,7 +163,6 @@
         return `${year}-${month}-${day}`;
       }
 
-      // Tentar conversão via objeto Date
       const parsed = new Date(str);
       if (!isNaN(parsed.getTime())) {
         const year = parsed.getFullYear();
@@ -496,7 +489,7 @@
         setCurrentDate(newDate);
       };
 
-      // Gestos Swipe
+      // Gestos Swipe Otimizados (Evita disparos acidentais em scroll vertical)
       const handleTouchStart = (e) => {
         touchStartX.current = e.targetTouches[0].clientX;
         touchStartY.current = e.targetTouches[0].clientY;
@@ -513,7 +506,8 @@
         const distanceX = touchStartX.current - touchEndX.current;
         const distanceY = Math.abs((touchStartY.current || 0) - (touchEndY.current || 0));
 
-        if (Math.abs(distanceX) > distanceY && Math.abs(distanceX) > 50) {
+        // Requer deslize horizontal claro (>75px) e com predominância horizontal em relação ao scroll vertical (1.8x)
+        if (Math.abs(distanceX) > 75 && Math.abs(distanceX) > 1.8 * distanceY) {
           if (distanceX > 0) {
             handleNext();
           } else {
@@ -845,7 +839,7 @@
           {/* DICA VISUAL PARA MOBILE SWIPE */}
           <div className="sm:hidden bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] text-center py-1 flex items-center justify-center gap-1">
             <IconSwipeHand />
-            <span>Deslize para a esquerda ou direita para mudar de data</span>
+            <span>Deslize para os lados para mudar de período</span>
           </div>
 
           {/* CONTEÚDO PRINCIPAL (COM SUPORTE SWIPE) */}
@@ -853,7 +847,7 @@
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="flex-1 p-3 sm:p-6 max-w-[1600px] w-full mx-auto overflow-x-auto touch-swipe-zone"
+            className="flex-1 p-2 sm:p-6 max-w-[1600px] w-full mx-auto touch-swipe-zone"
           >
             {/* CABEÇALHO EXCLUSIVO PARA IMPRESSÃO */}
             <div className="print-header flex-col pb-3 mb-4 border-b border-slate-300">
@@ -1316,7 +1310,7 @@
       );
     }
 
-    // --- VISTA DA SEMANA ---
+    // --- VISTA DA SEMANA (OTIMIZADA PARA MOBILE E ECRA INTEIRO) ---
     function WeekView({ currentDate, events, getCategoryMeta, onAddEvent, onEditEvent }) {
       const hours = Array.from({ length: 16 }, (_, i) => i + 7); // 07:00 a 22:00
 
@@ -1331,7 +1325,7 @@
           return {
             date: d,
             dateKey: formatDateKey(d),
-            label: d.toLocaleDateString('pt-PT', { weekday: 'short' }),
+            label: d.toLocaleDateString('pt-PT', { weekday: 'short' }).replace('.', ''),
             dayNum: d.getDate(),
             isToday: formatDateKey(d) === formatDateKey(new Date())
           };
@@ -1339,28 +1333,32 @@
       }, [currentDate]);
 
       return (
-        <div className="print-area bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl flex flex-col overflow-x-auto">
-          <div className="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 sticky top-0 z-10 min-w-[650px]">
-            <div className="p-2.5 text-center text-xs font-bold text-slate-400 border-r border-slate-200 dark:border-slate-800">
+        <div className="print-area bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-xl flex flex-col w-full">
+          {/* CABEÇALHO DOS DIAS DA SEMANA */}
+          <div className="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 sticky top-0 z-10 w-full">
+            <div className="p-1 sm:p-2.5 text-center text-[9px] sm:text-xs font-bold text-slate-400 border-r border-slate-200 dark:border-slate-800 flex items-center justify-center">
               Hora
             </div>
             {weekDays.map((wd, i) => (
-              <div key={i} className="p-2.5 text-center border-r border-slate-200 dark:border-slate-800/60 last:border-r-0">
-                <span className="text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400 block">{wd.label}</span>
-                <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-full ${wd.isToday ? 'bg-indigo-600 text-white' : 'text-slate-800 dark:text-slate-200'}`}>
+              <div key={i} className="p-1 sm:p-2.5 text-center border-r border-slate-200 dark:border-slate-800/60 last:border-r-0 flex flex-col items-center justify-center min-w-0">
+                <span className="text-[8px] sm:text-[10px] uppercase font-semibold text-slate-500 dark:text-slate-400 block truncate w-full">
+                  {wd.label}
+                </span>
+                <span className={`inline-block text-[10px] sm:text-xs font-bold px-1 sm:px-2 py-0.5 rounded-full ${wd.isToday ? 'bg-indigo-600 text-white' : 'text-slate-800 dark:text-slate-200'}`}>
                   {wd.dayNum}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="divide-y divide-slate-200 dark:divide-slate-800/50 min-w-[650px]">
+          {/* GRELHA HORÁRIA DA SEMANA */}
+          <div className="divide-y divide-slate-200 dark:divide-slate-800/50 w-full">
             {hours.map((hour) => {
               const hourStr = `${String(hour).padStart(2, '0')}:00`;
 
               return (
-                <div key={hour} className="grid grid-cols-8 min-h-[64px]">
-                  <div className="p-1 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-mono font-medium text-center flex items-center justify-center bg-slate-50/50 dark:bg-slate-900/40">
+                <div key={hour} className="grid grid-cols-8 min-h-[56px] sm:min-h-[64px] w-full">
+                  <div className="p-0.5 sm:p-1 border-r border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[9px] sm:text-[11px] font-mono font-medium text-center flex items-center justify-center bg-slate-50/50 dark:bg-slate-900/40 select-none">
                     {hourStr}
                   </div>
 
@@ -1375,7 +1373,7 @@
                       <div
                         key={dayIdx}
                         onClick={() => onAddEvent(wd.dateKey, hourStr)}
-                        className="p-1 border-r border-slate-200/60 dark:border-slate-800/40 last:border-r-0 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-all cursor-pointer relative"
+                        className="p-0.5 sm:p-1 border-r border-slate-200/60 dark:border-slate-800/40 last:border-r-0 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-all cursor-pointer relative min-w-0"
                       >
                         {hourEvents.map(evt => {
                           const meta = getCategoryMeta(evt.category);
@@ -1383,15 +1381,15 @@
                             <div
                               key={evt.id}
                               onClick={(e) => onEditEvent(evt, e)}
-                              className={`p-1.5 rounded-lg border text-xs font-medium ${meta.bg} ${meta.text} ${meta.border} shadow-sm mb-1 transition-all hover:scale-[1.01]`}
+                              className={`p-1 sm:p-1.5 rounded-md sm:rounded-lg border text-[9px] sm:text-xs font-medium ${meta.bg} ${meta.text} ${meta.border} shadow-sm mb-0.5 transition-all hover:scale-[1.01] overflow-hidden`}
+                              title={`${evt.title} (${normalizeTimeStr(evt.startTime)}-${normalizeTimeStr(evt.endTime)})${evt.location ? ` - ${evt.location}` : ''}`}
                             >
-                              <div className="font-semibold truncate text-[11px]">{evt.title}</div>
-                              <div className="text-[10px] opacity-90 flex items-center gap-1 font-mono mt-0.5">
-                                <IconClock />
-                                <span>{normalizeTimeStr(evt.startTime)} - {normalizeTimeStr(evt.endTime)}</span>
+                              <div className="font-semibold truncate text-[9px] sm:text-[11px] leading-tight block">{evt.title}</div>
+                              <div className="text-[8px] sm:text-[10px] opacity-90 flex items-center gap-0.5 font-mono mt-0.5 leading-none">
+                                <span className="truncate">{normalizeTimeStr(evt.startTime)}</span>
                               </div>
                               {evt.location && (
-                                <div className="text-[10px] opacity-85 truncate flex items-center gap-1 mt-0.5 font-sans">
+                                <div className="text-[8px] sm:text-[10px] opacity-85 truncate flex items-center gap-0.5 mt-0.5 font-sans leading-none">
                                   <IconMapPin />
                                   <span className="truncate">{evt.location}</span>
                                 </div>
